@@ -47,7 +47,7 @@ $('everySel').setAttribute('aria-label',L('تكرار التذكير','Reminder 
 const ed=!!$('editId').value;$('formTitle').textContent=ed?L('✏️ تعديل المهمة','✏️ Edit task'):L('➕ مهمة جديدة','➕ New task');$('saveBtn').textContent=ed?L('حفظ التعديلات','Save changes'):L('حفظ المهمة','Save task');
 setLogout();if(document.documentElement.dataset.theme)applyTheme(document.documentElement.dataset.theme,false);render()}
 const names=['الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];
-let state={tasks:[],history:{},hourly:false,every:1,lastDay:'',updated:0},store=null,lastSaved='',notified={};try{notified=JSON.parse(localStorage.getItem('yommy_notified')||'{}')}catch(e){}
+let pushApi=null;let state={tasks:[],history:{},hourly:false,every:1,lastDay:'',updated:0},store=null,lastSaved='',notified={};try{notified=JSON.parse(localStorage.getItem('yommy_notified')||'{}')}catch(e){}
 let filter='all', selectedDate='', viewYear=0, viewMonth=0, lastRenderedToday='', toastTimer;
 const pad=n=>String(n).padStart(2,'0');
 const key=d=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
@@ -66,8 +66,8 @@ state.lastDay=t;save()}
 function syncDay(){const t=today();if(t!==lastRenderedToday){if(selectedDate===lastRenderedToday)selectedDate=t;lastRenderedToday=t}}
 function mergeState(r){if(!r||!Array.isArray(r.tasks))return;const newer=(r.updated||0)>(state.updated||0);const h=newer?{...state.history,...r.history}:{...r.history,...state.history};if(newer)state={...state,...r};state.history=h;rollover();save()}
 function cloudInit(){window.yommyHooks={
-ready(api){$('loginBtn').onclick=()=>api.login();$('logoutBtn').onclick=()=>api.logout()},
-user(u,api){const li=!!u;$('loginBtn').hidden=li;$('logoutBtn').hidden=!li;if(!li){store=null;uname='';return}uname=(u.displayName||u.email||'').split(' ')[0];setLogout();store={set:({json})=>api.push(json)}},
+ready(api){pushApi=api;$('loginBtn').onclick=()=>api.login();$('logoutBtn').onclick=()=>api.logout()},
+user(u,api){const li=!!u;$('loginBtn').hidden=li;$('logoutBtn').hidden=!li;if(!li){store=null;uname='';return}uname=(u.displayName||u.email||'').split(' ')[0];setLogout();store={set:({json})=>api.push(json)};if(state.hourly)registerPush(false)},
 remote(json,first){try{if(first)lastSaved='';mergeState(JSON.parse(json));$('hourlyToggle').checked=!!state.hourly;$('everySel').value=String(state.every||1);render();if(first)showToast(L('تمت المزامنة مع حسابك ☁️','Synced with your account ☁️'))}catch(e){}},
 empty(){lastSaved='';save();showToast(L('تم ربط حسابك ☁️','Account linked ☁️'))},
 error(m){showToast(m,5000)}}}
@@ -96,9 +96,10 @@ $('langBtn').onclick=()=>applyLang(lang==='en'?'ar':'en');
 $('everySel').onchange=e=>{state.every=Number(e.target.value);save();showToast(L('اتحفظ التكرار','Frequency saved'))};
 $('importBtn').onclick=()=>$('importFile').click();
 $('importFile').onchange=async e=>{try{const r=JSON.parse(await e.target.files[0].text());if(!Array.isArray(r.tasks))throw 0;r.tasks=r.tasks.filter(t=>t&&typeof t.id==='string'&&typeof t.name==='string');if(!state.tasks.length&&!state.lastDay){state={...state,...r}}else{state.history={...r.history,...state.history};const ids=new Set(state.tasks.map(t=>t.id));r.tasks.forEach(t=>{if(!ids.has(t.id))state.tasks.push(t)})}lastSaved='';rollover();save();render();showToast(L('تم الاستيراد ✅','Import done ✅'))}catch(x){showToast(L('الملف غير صالح','Invalid file'))}e.target.value=''};
-$('hourlyToggle').onchange=e=>{state.hourly=e.target.checked;save();if(state.hourly&&'Notification' in window&&Notification.permission!=='granted')requestPermission();showToast(state.hourly?L('تم تفعيل التذكير أثناء فتح الصفحة','Reminders on while the page is open'):L('تم إيقاف التذكير','Reminders off'))};
+$('hourlyToggle').onchange=async e=>{state.hourly=e.target.checked;save();if(state.hourly)await requestPermission();showToast(state.hourly?L('تم تفعيل التذكير','Reminders on'):L('تم إيقاف التذكير','Reminders off'));if(state.hourly)registerPush(true)};
+async function registerPush(announce){if(!pushApi||!pushApi.enablePush||!store||!('Notification'in window)||Notification.permission!=='granted')return;try{await pushApi.enablePush();if(announce)showToast(L('تم تفعيل الإشعارات حتى والتطبيق مقفول ✅','Notifications enabled even when the app is closed ✅'),4000)}catch(e){console.error(e);if(announce)showToast(L('تعذّر تفعيل إشعارات الخلفية','Could not enable background notifications'),5000)}}
 async function requestPermission(){if('Notification'in window&&Notification.permission==='default'){try{await Notification.requestPermission()}catch(e){}}}
-$('notifyBtn').onclick=async()=>{if(!('Notification'in window)){showToast(L('المتصفح ده مش بيدعم الإشعارات','This browser does not support notifications'));return}await requestPermission();if(Notification.permission==='granted')showToast(L('الإشعارات مسموح بها على المتصفح','Notifications are allowed'));else showToast(L('اسمح بالإشعارات من إعدادات المتصفح','Allow notifications in your browser settings'))};
+$('notifyBtn').onclick=async()=>{if(!('Notification'in window)){showToast(L('المتصفح ده مش بيدعم الإشعارات','This browser does not support notifications'));return}await requestPermission();if(Notification.permission==='granted'){showToast(L('الإشعارات مسموح بها على المتصفح','Notifications are allowed'));registerPush(false)}else showToast(L('اسمح بالإشعارات من إعدادات المتصفح','Allow notifications in your browser settings'))};
 function reminders(){if(!state.hourly)return;const h=new Date().getHours(),off=(h-12+24)%24;if(off>12)return;if(state.every===2&&off%2)return;
 const t=today(),k=t+'-'+h;if(notified[k])return;const pending=activeTasks(t).filter(x=>!x.done);if(!pending.length)return;
 notified[k]=1;Object.keys(notified).forEach(x=>{if(!x.startsWith(t))delete notified[x]});try{localStorage.setItem('yommy_notified',JSON.stringify(notified))}catch(e){}
@@ -125,9 +126,11 @@ if('serviceWorker'in navigator)window.addEventListener('load',()=>navigator.serv
 <script type="module">
 import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import{getAuth,GoogleAuthProvider,signInWithPopup,signInWithRedirect,getRedirectResult,onAuthStateChanged,signOut}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import{initializeFirestore,persistentLocalCache,persistentMultipleTabManager,doc,setDoc,onSnapshot}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import{getMessaging,getToken}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging.js";
+import{initializeFirestore,persistentLocalCache,persistentMultipleTabManager,doc,setDoc,onSnapshot,arrayUnion}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 /* الصق هنا إعدادات Firebase بتاعتك (Project settings > Your apps > Web app) */
 const firebaseConfig={apiKey:"AIzaSyAgrfOP_fisw42wszt6mVU4WOyisj178Zw",authDomain:"yommy-f7b06.firebaseapp.com",projectId:"yommy-f7b06",storageBucket:"yommy-f7b06.firebasestorage.app",messagingSenderId:"437867521004",appId:"1:437867521004:web:c8fef52488128d07b616c9"};
+const VAPID_KEY="BFaBg2wcCh3e7RSkV4z5bj9PJok3zBiyRqPUXfuqk0can8ySuW9iwoQv6BHLTGlBTs2K15Hbr3_wmY-mjb_fY7E";
 const H=()=>window.yommyHooks;
 if(firebaseConfig.apiKey.startsWith("PASTE")){
   H()?.ready({login:()=>H().error('Firebase not configured'),logout(){}});
@@ -144,7 +147,8 @@ if(firebaseConfig.apiKey.startsWith("PASTE")){
       }
     },
     logout(){return signOut(auth)},
-    push(json){const u=auth.currentUser;if(!u)return Promise.resolve();return setDoc(doc(db,'users',u.uid),{json,updated:Date.now()})}
+    push(json){const u=auth.currentUser;if(!u)return Promise.resolve();let lang='ar';try{lang=localStorage.getItem('yommy_lang_v1')||'ar'}catch(e){}return setDoc(doc(db,'users',u.uid),{json,updated:Date.now(),tz:Intl.DateTimeFormat().resolvedOptions().timeZone,lang},{merge:true})},
+    async enablePush(){const u=auth.currentUser;if(!u||VAPID_KEY.startsWith('PASTE'))throw new Error('no vapid');const reg=await navigator.serviceWorker.ready;const token=await getToken(getMessaging(app),{vapidKey:VAPID_KEY,serviceWorkerRegistration:reg});if(!token)throw new Error('no token');await setDoc(doc(db,'users',u.uid),{tokens:arrayUnion(token),tz:Intl.DateTimeFormat().resolvedOptions().timeZone},{merge:true})}
   };
   H().ready(api);
   getRedirectResult(auth).catch(()=>{});
