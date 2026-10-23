@@ -19,7 +19,7 @@ button,input,select,textarea{font:inherit}button{cursor:pointer;border:0;border-
 </head>
 <body>
 <div id="app">
-<header><div class="brand"><div class="logo">ي</div><div><h1>يومي <span style="font-weight:400;opacity:.55">Yommy</span></h1><p>خطوة صغيرة كل يوم 🌱</p></div></div><div class="top-actions"><button class="secondary" id="themeBtn" type="button">🌙 الوضع الداكن</button><button class="secondary" id="installBtn" type="button" hidden>📲 تثبيت التطبيق</button><button class="secondary" id="notifyBtn">🔔 تفعيل التنبيهات</button><button class="ghost" id="exportBtn">تصدير البيانات</button><button class="secondary" id="importBtn" type="button">⬆️ استيراد</button><input type="file" id="importFile" accept="application/json" hidden></div></header>
+<header><div class="brand"><div class="logo">ي</div><div><h1>يومي <span style="font-weight:400;opacity:.55">Yommy</span></h1><p>خطوة صغيرة كل يوم 🌱</p></div></div><div class="top-actions"><button class="secondary" id="themeBtn" type="button">🌙 الوضع الداكن</button><button class="secondary" id="loginBtn" type="button">🔐 دخول بجوجل</button><button class="ghost" id="logoutBtn" type="button" hidden>خروج</button><button class="secondary" id="installBtn" type="button" hidden>📲 تثبيت التطبيق</button><button class="secondary" id="notifyBtn">🔔 تفعيل التنبيهات</button><button class="ghost" id="exportBtn">تصدير البيانات</button><button class="secondary" id="importBtn" type="button">⬆️ استيراد</button><input type="file" id="importFile" accept="application/json" hidden></div></header>
 <div class="welcome"><div class="eyebrow" id="dateLabel">يومك الجديد</div><h2 id="greeting">أهلًا بيك 👋</h2><p id="welcomeText">كل إنجاز صغير بيفرق. خلّينا نبدأ.</p><div class="progressrow"><div class="progress"><div id="progressFill"></div></div><div class="percent" id="percent">0%</div></div><div class="muted" style="margin-top:8px" id="progressCaption">0 من 0 مهام مكتملة</div></div>
 <div class="layout"><main class="panel"><div class="section-title"><h2>مهامك</h2><span class="muted" id="taskCount">0 مهام</span></div><div class="tabs" id="filters"><button class="active" data-filter="all">الكل</button><button data-filter="open">لسه متعملتش</button><button data-filter="done">مكتملة</button></div><div class="tasklist" id="taskList"></div><div class="notice">اليوم عندك في يومي بيبدأ الساعة 2:00 صباحًا، مش الساعة 12 بالليل.</div></main>
 <aside class="side-stack"><section class="panel"><div class="section-title"><h2 id="formTitle">➕ مهمة جديدة</h2><span class="muted">خطط ليومك</span></div><form id="taskForm"><input type="hidden" id="editId"><div class="formgrid"><div class="field full"><label for="taskName">اسم المهمة</label><input id="taskName" required maxlength="100" placeholder="مثلاً: أراجع محاضرة الخوارزميات"></div><div class="field"><label for="taskTime">الوقت (اختياري)</label><input id="taskTime" type="time"></div><div class="field"><label for="taskType">التكرار</label><select id="taskType"><option value="daily">كل يوم</option><option value="weekly">كل أسبوع</option><option value="once">مرة واحدة</option></select></div><div class="field full" id="weekField" hidden><label for="taskDay">يوم التكرار</label><select id="taskDay"><option value="0">الأحد</option><option value="1">الاثنين</option><option value="2">الثلاثاء</option><option value="3">الأربعاء</option><option value="4">الخميس</option><option value="5">الجمعة</option><option value="6">السبت</option></select></div><div class="field full" id="onceField" hidden><label for="taskDate">تاريخ المهمة</label><input id="taskDate" type="date"></div></div><div class="formbuttons"><button type="submit" id="saveBtn">حفظ المهمة</button><button type="button" class="secondary" id="cancelEdit" hidden>إلغاء</button></div></form></section>
@@ -50,7 +50,12 @@ state.tasks.forEach(x=>{if(x.type==='once'){if(x.date<t)x.date=t}else x.done=fal
 state.lastDay=t;save()}
 function syncDay(){const t=today();if(t!==lastRenderedToday){if(selectedDate===lastRenderedToday)selectedDate=t;lastRenderedToday=t}}
 function mergeState(r){if(!r||!Array.isArray(r.tasks))return;const newer=(r.updated||0)>(state.updated||0);const h=newer?{...state.history,...r.history}:{...r.history,...state.history};if(newer)state={...state,...r};state.history=h;rollover();save()}
-async function cloudInit(){try{if(!window.claude)return;const db=await claude.use('db'),u=await claude.use('user');if(!db||!u)return;const id=await u.id();if(!id)return;store=db.collection('data/users/'+id).doc('state');const d=await store.get();if(d.exists&&d.data().json)mergeState(JSON.parse(d.data().json));lastSaved='';save();render();showToast('تمت المزامنة مع حسابك ☁️')}catch(e){}}
+function cloudInit(){window.yommyHooks={
+ready(api){$('loginBtn').onclick=()=>api.login();$('logoutBtn').onclick=()=>api.logout()},
+user(u,api){const li=!!u;$('loginBtn').hidden=li;$('logoutBtn').hidden=!li;if(!li){store=null;return}$('logoutBtn').textContent='خروج — '+((u.displayName||u.email||'').split(' ')[0]);store={set:({json})=>api.push(json)}},
+remote(json,first){try{if(first)lastSaved='';mergeState(JSON.parse(json));$('hourlyToggle').checked=!!state.hourly;$('everySel').value=String(state.every||1);render();if(first)showToast('تمت المزامنة مع حسابك ☁️')}catch(e){}},
+empty(){lastSaved='';save();showToast('تم ربط حسابك ☁️')},
+error(m){showToast(m,5000)}}}
 function load(){try{let x=JSON.parse(localStorage.getItem(STORE));if(x&&Array.isArray(x.tasks))state={...state,...x}}catch(e){}}
 function activeTasks(date){let dt=parseDate(date);return state.tasks.filter(t=>{if(t.type==='daily')return true;if(t.type==='weekly')return dt.getDay()===Number(t.weekday);return t.date===date})}
 function snapshot(date){let tasks=activeTasks(date);let old=state.history[date];let records=tasks.map(t=>{let rec=old?.records?.find(r=>r.id===t.id);return {id:t.id,name:t.name,time:t.time||'',type:t.type,done:date===today()?!!t.done:(rec?rec.done:false)}});return {records,done:records.filter(r=>r.done).length,total:records.length,percent:records.length?Math.round(records.filter(r=>r.done).length/records.length*100):0}}
@@ -100,6 +105,45 @@ applyTheme(initialTheme,false);
 let now=new Date();viewYear=now.getFullYear();viewMonth=now.getMonth();selectedDate=today();lastRenderedToday=today();$('hourlyToggle').checked=!!state.hourly;$('everySel').value=String(state.every||1);if(!$('taskDate').value)$('taskDate').value=today();render();setInterval(()=>{rollover();syncDay();render();reminders()},60000);
 })();
 if('serviceWorker'in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
+</script>
+<script type="module">
+import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import{getAuth,GoogleAuthProvider,signInWithPopup,signInWithRedirect,getRedirectResult,onAuthStateChanged,signOut}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import{initializeFirestore,persistentLocalCache,persistentMultipleTabManager,doc,setDoc,onSnapshot}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+/* الصق هنا إعدادات Firebase بتاعتك (Project settings > Your apps > Web app) */
+const firebaseConfig={apiKey:"AIzaSyAgrfOP_fisw42wszt6mVU4WOyisj178Zw",authDomain:"yommy-f7b06.firebaseapp.com",projectId:"yommy-f7b06",storageBucket:"yommy-f7b06.firebasestorage.app",messagingSenderId:"437867521004",appId:"1:437867521004:web:c8fef52488128d07b616c9"};
+const H=()=>window.yommyHooks;
+if(firebaseConfig.apiKey.startsWith("PASTE")){
+  H()?.ready({login:()=>H().error('لسه ما حطيتش إعدادات Firebase في الكود'),logout(){}});
+}else{
+  const app=initializeApp(firebaseConfig),auth=getAuth(app);
+  const db=initializeFirestore(app,{localCache:persistentLocalCache({tabManager:persistentMultipleTabManager()})});
+  let unsub=null,first=true;
+  const api={
+    async login(){
+      const p=new GoogleAuthProvider();p.setCustomParameters({prompt:'select_account'});
+      try{await signInWithPopup(auth,p)}catch(e){
+        if(e.code==='auth/popup-blocked'||e.code==='auth/operation-not-supported-in-this-environment'){try{await signInWithRedirect(auth,p)}catch(x){H().error('تعذّر تسجيل الدخول')}}
+        else if(e.code!=='auth/popup-closed-by-user'&&e.code!=='auth/cancelled-popup-request')H().error('تعذّر تسجيل الدخول: '+(e.code||''));
+      }
+    },
+    logout(){return signOut(auth)},
+    push(json){const u=auth.currentUser;if(!u)return Promise.resolve();return setDoc(doc(db,'users',u.uid),{json,updated:Date.now()})}
+  };
+  H().ready(api);
+  getRedirectResult(auth).catch(()=>{});
+  onAuthStateChanged(auth,u=>{
+    if(unsub){unsub();unsub=null}
+    H().user(u,api);
+    if(!u)return;
+    first=true;
+    unsub=onSnapshot(doc(db,'users',u.uid),s=>{
+      if(s.metadata.hasPendingWrites)return;
+      if(s.exists()&&s.data().json)H().remote(s.data().json,first);else if(first)H().empty();
+      first=false;
+    },()=>H().error('تعذّرت المزامنة — راجع قواعد Firestore'));
+  });
+}
 </script>
 </body>
 </html>
