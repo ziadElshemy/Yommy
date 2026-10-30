@@ -15,16 +15,236 @@ header{display:flex;align-items:center;justify-content:space-between;gap:14px;ma
 button,input,select,textarea{font:inherit}button{cursor:pointer;border:0;border-radius:12px;padding:11px 15px;background:var(--site-primary);color:var(--site-on-primary);font-weight:700}button.secondary{background:var(--site-secondary);color:var(--site-on-secondary)}button.ghost{background:transparent;color:inherit;border:1px solid #aebbb0}button.danger{background:#a63e37;color:white}.layout{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(280px,.8fr);gap:20px}.panel{background:light-dark(#fff,#1b2720);border:1px solid light-dark(#e0e8df,#344339);border-radius:22px;padding:22px;box-shadow:0 8px 28px #16291b0a}.welcome{background:var(--site-primary);color:var(--site-on-primary);border-radius:22px;padding:24px;margin-bottom:18px}.welcome .eyebrow{opacity:.8;font-size:13px}.welcome h2{font-size:27px;margin:8px 0}.welcome p{margin:0;opacity:.85}.progressrow{display:flex;align-items:center;gap:15px;margin-top:22px}.progress{height:10px;border-radius:99px;background:#ffffff44;overflow:hidden;flex:1}.progress div{height:100%;width:0;background:#c7f18a;border-radius:99px;transition:width .2s}.percent{font-size:25px;font-weight:800;min-width:65px}.section-title{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:15px}.section-title h2{font-size:19px;margin:0}.muted{opacity:.65;font-size:13px}.tabs{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:15px}.tabs button{padding:8px 12px;font-size:13px}.tabs button.active{background:var(--site-secondary);color:var(--site-on-secondary);outline:1px solid #9cb8a0}.tasklist{display:grid;gap:10px}.task{display:flex;align-items:flex-start;gap:12px;padding:14px;border:1px solid light-dark(#e5ebe4,#35443a);border-radius:15px}.task.done{opacity:.62}.task.done .taskname{text-decoration:line-through}.check{width:24px;height:24px;flex:0 0 24px;border:2px solid #8ba393;border-radius:8px;display:grid;place-items:center;padding:0;background:transparent;color:var(--site-on-primary)}.check.checked{background:var(--site-primary);border-color:var(--site-primary)}.taskbody{flex:1;min-width:0}.taskname{font-weight:700;overflow-wrap:anywhere}.taskmeta{display:flex;gap:8px;flex-wrap:wrap;font-size:12px;opacity:.68;margin-top:6px}.task-actions{display:flex;gap:5px}.task-actions button{padding:7px 9px;border-radius:9px;font-size:12px}.empty{text-align:center;padding:35px 12px;opacity:.65}.empty .emoji{font-size:35px}.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.field{display:grid;gap:6px}.field.full{grid-column:1/-1}.field label{font-size:13px;font-weight:700}.field input,.field select,.field textarea{width:100%;padding:12px;border-radius:11px;border:1px solid light-dark(#d7e0d6,#46564a);background:light-dark(#fff,#131c17);color:inherit;min-width:0}.formbuttons{display:flex;gap:8px;margin-top:15px}.side-stack{display:grid;gap:20px;align-content:start}.calendar-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}.calendar-head button{padding:7px 11px}.calgrid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px}.weekday,.day{display:grid;place-items:center;min-height:38px;font-size:12px}.weekday{opacity:.55}.day{background:light-dark(#f5f8f4,#222f27);color:inherit;border-radius:10px;padding:4px 0;position:relative}.day.today{outline:2px solid var(--site-primary)}.day.selected{background:var(--site-primary);color:var(--site-on-primary)}.day.hasdata:after{content:"";position:absolute;bottom:4px;width:4px;height:4px;border-radius:50%;background:#9bca70}.day.selected.hasdata:after{background:#fff}.day.other{opacity:.3}.history-stat{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0}.stat{background:var(--site-secondary);color:var(--site-on-secondary);padding:12px 8px;border-radius:14px;text-align:center}.stat strong{font-size:22px;display:block}.stat span{font-size:11px}.notice{font-size:12px;opacity:.7;line-height:1.7;margin-top:15px}.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#1b2c22;color:white;padding:12px 18px;border-radius:14px;box-shadow:0 6px 25px #0003;z-index:5;display:none;max-width:90vw}.reminder-line{display:flex;align-items:center;justify-content:space-between;gap:10px}.pill{background:var(--site-secondary);color:var(--site-on-secondary);padding:5px 9px;border-radius:99px;font-size:11px}
 @media(max-width:800px){#app{padding:18px 13px}.layout{grid-template-columns:1fr}.brand h1{font-size:23px}.welcome{padding:20px}.panel{padding:17px}.side-stack{grid-row:auto}}
 @media(max-width:420px){header{align-items:flex-start}.top-actions button{padding:9px;font-size:12px}.formgrid{grid-template-columns:1fr}.field.full{grid-column:auto}.task-actions{flex-direction:column}.percent{font-size:21px}}
-.weekday{font-size:11px;white-space:nowrap}</style>
+.weekday{font-size:11px;white-space:nowrap}
+/* ===== Stages 7-9: chart ranges, weekly statistics, streak ===== */
+.stats-panel{margin-top:20px}
+.range-tabs{margin:0 0 14px}
+.range-tabs button{padding:6px 13px;font-size:13px}
+#chartPanel.wide{grid-column:1/-1}
+.bars.dense{gap:2px}
+.bars.dense .bar-col{gap:0}
+.bars.dense .bar-track{max-width:none;border-radius:4px}
+.bars.dense .bar-fill{border-radius:4px}
+.bar-track.nodata{background:repeating-linear-gradient(135deg,transparent 0 3px,var(--line) 3px 4px);border:1px dashed var(--line)}
+.bars-axis{display:flex;justify-content:space-between;font-size:11px;opacity:.65;margin-top:8px}
+.chart-note{margin:12px 0 0}
+.sub-title{font-size:15px;margin:22px 0 10px}
+.streak-ctl{display:flex;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:14px}
+.streak-ctl input{width:84px;padding:9px 11px;border-radius:11px;border:1px solid var(--line);background:var(--surface-2);color:inherit}
+.streak-sum{font-weight:700;margin-bottom:12px}
+.scal-wrap{max-width:430px}
+.scal{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px}
+.sd{display:grid;place-items:center;align-content:center;min-height:44px;border-radius:10px;font-size:12.5px;line-height:1.15;border:1px dashed transparent}
+.sd small{font-size:9.5px;opacity:.75}
+.sd.blank{border:0}
+.sd.ok{background:var(--site-primary);color:var(--site-on-primary);font-weight:700}
+.sd.ok.cur{box-shadow:0 0 0 2px #e8a33d}
+.sd.miss,.sd.pending{background:var(--surface-2)}
+.sd.nodata{border-color:var(--line);opacity:.55}
+.sd.future{opacity:.3}
+.sd.today{outline:2px solid var(--site-primary);outline-offset:1px}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12px;margin-top:12px;opacity:.85}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:4px;vertical-align:-2px;margin-inline-end:5px;border:1px solid var(--line)}
+</style>
+<style>
+/* ===== Yommy UI refresh: header menu, section navigation, general polish ===== */
+:root{--surface:light-dark(#fff,#1b2720);--surface-2:light-dark(#f1f5ef,#222f27);--line:light-dark(#e0e8df,#344339);--shadow:0 1px 2px #16291b0d,0 8px 24px #16291b0a;--r:20px}
+button,input,select,textarea{transition:background-color .15s,border-color .15s,box-shadow .15s,opacity .15s}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--site-primary);outline-offset:2px}
+#app{padding-top:20px}
+header{align-items:center;margin-bottom:20px}
+html[dir="ltr"] header{justify-content:flex-start}
+html[dir="ltr"] .menu-wrap{order:-1}
+.menu-wrap{position:relative;flex:0 0 auto}
+.menu-btn{width:44px;height:44px;padding:0;display:grid;place-items:center;border-radius:14px;background:var(--surface);color:inherit;border:1px solid var(--line);box-shadow:var(--shadow)}
+.menu-btn:hover,.menu-btn[aria-expanded="true"]{background:var(--site-secondary);color:var(--site-on-secondary)}
+.menu{position:absolute;top:calc(100% + 8px);left:0;z-index:30;width:min(340px,calc(100vw - 26px));max-height:calc(100dvh - 110px);overflow:auto;background:var(--surface);color:var(--site-on-background);border:1px solid var(--line);border-radius:18px;padding:8px;box-shadow:0 18px 48px #0000002e}
+.menu-group{padding:6px 0}
+.menu-group+.menu-group{border-top:1px solid var(--line)}
+.menu-label{font-size:12px;font-weight:700;opacity:.6;padding:6px 12px 4px}
+.menu .menu-group>button{display:block;width:100%;text-align:start;background:transparent;color:inherit;border:0;border-radius:11px;padding:11px 12px;font-size:14px;font-weight:600}
+.menu .menu-group>button:hover{background:var(--surface-2)}
+.menu .menu-group>button[hidden]{display:none}
+#langBtn::before{content:"🌐 "}#logoutBtn::before{content:"🚪 "}#exportBtn::before{content:"⬇️ "}
+.menu-reminder{padding:8px 12px 6px}
+.menu-reminder .reminder-line{align-items:center}
+.menu-reminder .notice{margin:10px 0 0;font-size:11.5px}
+.mainnav{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;max-width:620px;margin-bottom:20px;padding:5px;background:var(--surface);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow)}
+.nav-item{display:flex;align-items:center;justify-content:center;gap:8px;padding:11px 8px;border-radius:13px;background:transparent;color:inherit;font-size:14px;font-weight:700;opacity:.75}
+.nav-item:hover{opacity:1;background:var(--surface-2)}
+.nav-item.active{background:var(--site-primary);color:var(--site-on-primary);opacity:1}
+.nav-item .ni{font-size:17px;line-height:1}
+.view{animation:viewIn .2s ease both}
+@keyframes viewIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.panel{background:var(--surface);border-radius:var(--r);box-shadow:var(--shadow)}
+.welcome{border-radius:var(--r);padding:26px;margin-bottom:20px;background-image:radial-gradient(circle at 100% 0,#ffffff22,transparent 55%)}
+.welcome h2{font-size:clamp(22px,4vw,28px)}
+.section-title{margin-bottom:16px}
+.tabs button{background:var(--surface-2);color:inherit;border-radius:99px;padding:8px 15px;font-weight:600}
+.tabs button.active{background:var(--site-primary);color:var(--site-on-primary);outline:0}
+.task{background:var(--surface);padding:14px 16px}
+.task:hover{border-color:var(--site-primary)}
+.task-actions button{padding:7px 12px}
+.field input,.field select,.field textarea{padding:12px 13px;border-radius:12px}
+.formbuttons button[type="submit"]{flex:1}
+.calgrid{gap:6px}.day{min-height:42px;border-radius:11px}.day:hover{outline:1px solid var(--site-primary)}
+.history-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:28px;align-items:start}
+.history-grid .history-stat{margin-top:0}
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:20px}
+.kpi{display:grid;gap:4px;padding:16px;background:var(--surface);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow)}
+.kpi-ico{font-size:20px}.kpi strong{font-size:26px;line-height:1.25}.kpi span:last-child{font-size:12.5px;opacity:.7}
+.stats-row{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start}
+.bars{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;align-items:end}
+.bar-col{display:grid;gap:6px;justify-items:center}
+.bar-track{width:100%;max-width:34px;height:140px;display:flex;align-items:flex-end;background:var(--surface-2);border-radius:10px;overflow:hidden}
+.bar-fill{width:100%;background:var(--site-primary);border-radius:10px;transition:height .3s}
+.bar-val{font-size:11px;opacity:.75}.bar-lbl{font-size:11.5px;opacity:.7;white-space:nowrap}
+.bar-col.today .bar-lbl{opacity:1;font-weight:800;color:var(--site-primary)}
+.meter{height:8px;border-radius:99px;background:var(--surface-2);overflow:hidden}
+.meter>div{height:100%;background:var(--site-primary);border-radius:99px;transition:width .3s}
+.rank{display:grid;gap:7px;padding:11px 0}.rank:first-child{padding-top:0}.rank+.rank{border-top:1px solid var(--line)}
+.rank-head{display:flex;justify-content:space-between;align-items:baseline;gap:10px}.rank-name{font-weight:700;overflow-wrap:anywhere}
+.goals-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.goal{display:grid;gap:12px;padding:20px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow)}
+.goal-head{display:flex;align-items:center;gap:12px}
+.goal-ico{flex:0 0 44px;width:44px;height:44px;display:grid;place-items:center;border-radius:14px;background:var(--site-secondary);font-size:21px}
+.badges{display:flex;flex-wrap:wrap;gap:6px}
+.badge{padding:4px 11px;border:1px solid var(--line);border-radius:99px;font-size:12px;font-weight:700;opacity:.6}
+.badge.on{background:var(--site-primary);color:var(--site-on-primary);border-color:transparent;opacity:1}
+@media(max-width:800px){
+.history-grid,.stats-row,.goals-grid{grid-template-columns:1fr}
+.history-grid{gap:20px}
+#app{padding-bottom:92px}
+.mainnav{position:fixed;left:0;right:0;bottom:0;z-index:20;max-width:none;margin:0;gap:2px;padding:6px 8px calc(6px + env(safe-area-inset-bottom,0px));border-width:1px 0 0;border-radius:18px 18px 0 0;box-shadow:0 -6px 24px #0000001a}
+.nav-item{flex-direction:column;gap:3px;padding:7px 2px;font-size:11.5px}
+.toast{bottom:88px}
+}
+@media(max-width:420px){header{align-items:center}.welcome{padding:20px}}
+@media(prefers-reduced-motion:reduce){.view{animation:none}*{transition:none!important}}
+/* ===== Stages 4-6: categories, notes ===== */
+.catchips{flex-wrap:nowrap;overflow-x:auto;padding-bottom:6px;margin-bottom:12px}
+.catchips button{flex:0 0 auto;white-space:nowrap;padding:6px 12px;font-size:12.5px}
+#taskList .taskmeta{align-items:center}
+.catchip{background:var(--site-secondary);color:var(--site-on-secondary);padding:1px 9px;border-radius:99px;font-weight:700}
+.notes-btn{background:var(--surface-2);color:inherit;border:1px solid var(--line);padding:1px 9px;border-radius:99px;font-size:12px;font-weight:600}
+.notes-btn[aria-expanded="true"]{background:var(--site-secondary);color:var(--site-on-secondary)}
+.tnotes{margin-top:8px;padding:8px 11px;border-radius:10px;background:var(--surface-2);font-size:13px;line-height:1.7;white-space:pre-wrap;overflow-wrap:anywhere;border-inline-start:3px solid var(--site-primary)}
+.tnotes[hidden]{display:none}
+.catmgr summary{cursor:pointer;font-weight:700}
+.catmgr .catbody{margin-top:14px}
+.catlist{display:grid;gap:8px;margin-bottom:14px}
+.catrow{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 10px;border:1px solid var(--line);border-radius:12px}
+.catname{min-width:0;overflow-wrap:anywhere;font-weight:600}
+.catbtns{display:flex;gap:5px;flex:0 0 auto}.catbtns button{padding:6px 11px;font-size:12px;border-radius:9px}
+.catform{display:flex;gap:8px;flex-wrap:wrap}
+.catform input[type="text"],.catform input:not([type]){flex:1 1 140px;min-width:0;padding:11px 12px;border-radius:12px;border:1px solid light-dark(#d7e0d6,#46564a);background:light-dark(#fff,#131c17);color:inherit}
+</style>
+<style>
+/* ===== Stages 10-12: Monthly review, user goals, task links (additive only) ===== */
+#gForm [hidden],#gFormPanel[hidden],#homeGoal[hidden]{display:none!important}
+.gfull{grid-column:1/-1}
+@media(max-width:420px){.gfull{grid-column:auto}}
+#monthlyPanel .calendar-head{max-width:430px}
+.bar-track.future{opacity:.25}
+.gst{display:inline-block;padding:3px 10px;border-radius:99px;font-size:12px;font-weight:700;white-space:nowrap}
+.gst.active{background:var(--site-secondary);color:var(--site-on-secondary)}
+.gst.done{background:var(--site-primary);color:var(--site-on-primary)}
+.gst.over{background:#a63e37;color:#fff}
+#myGoals + .section-title{margin-top:34px}
+#gFormPanel{margin-bottom:18px}
+#mgList{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;align-items:start}
+@media(max-width:800px){#mgList{grid-template-columns:1fr}}
+.gcard.over{border-color:#a63e37}
+.gcard .goal-head>div{min-width:0;flex:1}
+.gcard .goal-head strong{overflow-wrap:anywhere}
+.gmeta{display:flex;flex-wrap:wrap;gap:4px 12px;align-items:baseline;font-size:13px}
+.gmeta>strong{font-size:21px}
+.gdesc{font-size:13px;line-height:1.7;opacity:.8;overflow-wrap:anywhere;white-space:pre-wrap}
+.gcard details{border:1px solid var(--line);border-radius:12px;padding:8px 12px}
+.gcard summary{cursor:pointer;font-weight:700;font-size:13.5px}
+.mslist{list-style:none;margin:10px 0 0;padding:0;display:grid;gap:6px}
+.ms,.tl{display:flex;align-items:center;gap:8px;padding:6px 8px;border-radius:10px;background:var(--surface-2);font-size:13.5px}
+.ms.on .msn{opacity:.6;text-decoration:line-through}
+.msn{flex:1;min-width:0;overflow-wrap:anywhere}
+.msi{width:18px;text-align:center;flex:0 0 auto}
+.ms input[type=checkbox],.tl input[type=checkbox]{width:18px;height:18px;accent-color:var(--site-primary);flex:0 0 auto}
+.msx{padding:2px 9px;font-size:12px;border-radius:8px}
+.mini{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.mini input{flex:1 1 110px;min-width:0;padding:9px 11px;border-radius:11px;border:1px solid var(--line);background:var(--surface-2);color:inherit}
+.mini button{padding:8px 13px;font-size:13px}
+.tlist{display:grid;gap:6px;max-height:240px;overflow:auto;margin-top:10px}
+.gact{display:flex;gap:6px;flex-wrap:wrap}
+.gact button{padding:7px 12px;font-size:13px}
+#homeGoal{margin-bottom:20px;display:grid;gap:12px}
+#homeGoal .section-title{margin-bottom:0}
+.hg-row{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.hg-row>strong{font-size:17px;overflow-wrap:anywhere}
+</style>
 </head>
 <body>
 <div id="app">
-<header><div class="brand"><div class="logo">ي</div><div><h1>يومي <span style="font-weight:400;opacity:.55">Yommy</span></h1><p data-t>خطوة صغيرة كل يوم 🌱</p></div></div><div class="top-actions"><button class="secondary" id="themeBtn" type="button">🌙 الوضع الداكن</button><button class="secondary" id="langBtn" type="button">English</button><button class="secondary" id="loginBtn" type="button" data-t>🔐 دخول بجوجل</button><button class="ghost" id="logoutBtn" type="button" hidden>خروج</button><button class="secondary" id="installBtn" type="button" hidden data-t>📲 تثبيت التطبيق</button><button class="secondary" id="notifyBtn" data-t>🔔 تفعيل التنبيهات</button><button class="ghost" id="exportBtn" data-t>تصدير البيانات</button><button class="secondary" id="importBtn" type="button" data-t>⬆️ استيراد</button><input type="file" id="importFile" accept="application/json" hidden></div></header>
+<header><div class="brand"><div class="logo">ي</div><div><h1>يومي <span style="font-weight:400;opacity:.55">Yommy</span></h1><p data-t>خطوة صغيرة كل يوم 🌱</p></div></div>
+<div class="menu-wrap" id="menuWrap"><button class="menu-btn" id="menuBtn" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="menuPanel" aria-label="القائمة" data-i-ar-label="القائمة" data-i-en-label="Menu"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" fill="currentColor"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg></button>
+<div class="menu" id="menuPanel" hidden>
+<div class="menu-group"><div class="menu-label" data-i-ar="الحساب" data-i-en="Account">الحساب</div><button class="secondary" id="loginBtn" type="button" data-t>🔐 دخول بجوجل</button><button class="ghost" id="logoutBtn" type="button" hidden>خروج</button></div>
+<div class="menu-group"><div class="menu-label" data-i-ar="التفضيلات" data-i-en="Preferences">التفضيلات</div><button class="secondary" id="langBtn" type="button">English</button><button class="secondary" id="themeBtn" type="button">🌙 الوضع الداكن</button><button class="secondary" id="installBtn" type="button" hidden data-t>📲 تثبيت التطبيق</button></div>
+<div class="menu-group"><div class="menu-label" data-i-ar="التنبيهات" data-i-en="Notifications">التنبيهات</div><button class="secondary" id="notifyBtn" data-t>🔔 تفعيل التنبيهات</button><div class="menu-reminder"><div class="reminder-line"><div><strong data-t>⏰ التذكير بالمهام المتبقية</strong><div class="muted" style="margin-top:5px" data-t>اختياري: كل 3 ساعات، من 12 ظهرًا لحد 12 بالليل</div></div><input type="checkbox" id="hourlyToggle" aria-label="تفعيل التذكير كل ساعة" style="width:21px;height:21px;accent-color:var(--site-primary)"></div><p class="notice" data-t>التذكير بيشتغل طالما الصفحة مفتوحة (حتى في تبويب خلفي). لو المتصفح مقفول مفيش إشعار هيوصل، لأن ده محتاج خدمة إشعارات على سيرفر. ولو الإشعارات مش مسموحة هيظهر لك التذكير جوه الصفحة.</p></div></div>
+<div class="menu-group"><div class="menu-label" data-i-ar="البيانات" data-i-en="Data">البيانات</div><button class="ghost" id="exportBtn" data-t>تصدير البيانات</button><button class="secondary" id="importBtn" type="button" data-t>⬆️ استيراد</button></div>
+</div></div>
+<input type="file" id="importFile" accept="application/json" hidden></header>
+<nav class="mainnav" id="mainNav" aria-label="التنقل الرئيسي" data-i-ar-label="التنقل الرئيسي" data-i-en-label="Main navigation">
+<button type="button" class="nav-item active" data-view="home" aria-current="page"><span class="ni" aria-hidden="true">🏠</span><span class="nl" data-i-ar="الرئيسية" data-i-en="Home">الرئيسية</span></button>
+<button type="button" class="nav-item" data-view="stats"><span class="ni" aria-hidden="true">📊</span><span class="nl" data-i-ar="الإحصائيات" data-i-en="Statistics">الإحصائيات</span></button>
+<button type="button" class="nav-item" data-view="goals"><span class="ni" aria-hidden="true">🎯</span><span class="nl" data-i-ar="الأهداف" data-i-en="Goals">الأهداف</span></button>
+<button type="button" class="nav-item" data-view="history"><span class="ni" aria-hidden="true">📅</span><span class="nl" data-i-ar="السجل" data-i-en="History">السجل</span></button>
+</nav>
+<div class="view" id="view-home">
 <div class="welcome"><div class="eyebrow" id="dateLabel">يومك الجديد</div><h2 id="greeting">أهلًا بيك 👋</h2><p id="welcomeText">كل إنجاز صغير بيفرق. خلّينا نبدأ.</p><div class="progressrow"><div class="progress"><div id="progressFill"></div></div><div class="percent" id="percent">0%</div></div><div class="muted" style="margin-top:8px" id="progressCaption">0 من 0 مهام مكتملة</div></div>
-<div class="layout"><main class="panel"><div class="section-title"><h2 data-t>مهامك</h2><span class="muted" id="taskCount">0 مهام</span></div><div class="tabs" id="filters"><button class="active" data-filter="all" data-t>الكل</button><button data-filter="open" data-t>لسه متعملتش</button><button data-filter="done" data-t>مكتملة</button></div><div class="tasklist" id="taskList"></div><div class="notice" data-t>اليوم عندك في يومي بيبدأ الساعة 2:00 صباحًا، مش الساعة 12 بالليل.</div></main>
-<aside class="side-stack"><section class="panel"><div class="section-title"><h2 id="formTitle">➕ مهمة جديدة</h2><span class="muted" data-t>خطط ليومك</span></div><form id="taskForm"><input type="hidden" id="editId"><div class="formgrid"><div class="field full"><label for="taskName" data-t>اسم المهمة</label><input id="taskName" required maxlength="100" placeholder="مثلاً: أراجع محاضرة الخوارزميات"></div><div class="field"><label for="taskTime" data-t>الوقت (اختياري)</label><input id="taskTime" type="time"></div><div class="field"><label for="taskType" data-t>التكرار</label><select id="taskType"><option value="daily" data-t>كل يوم</option><option value="weekly" data-t>كل أسبوع</option><option value="once" data-t>مرة واحدة</option></select></div><div class="field full" id="weekField" hidden><label for="taskDay" data-t>يوم التكرار</label><select id="taskDay"><option value="0" data-t>الأحد</option><option value="1" data-t>الاثنين</option><option value="2" data-t>الثلاثاء</option><option value="3" data-t>الأربعاء</option><option value="4" data-t>الخميس</option><option value="5" data-t>الجمعة</option><option value="6" data-t>السبت</option></select></div><div class="field full" id="onceField" hidden><label for="taskDate" data-t>تاريخ المهمة</label><input id="taskDate" type="date"></div></div><div class="formbuttons"><button type="submit" id="saveBtn">حفظ المهمة</button><button type="button" class="secondary" id="cancelEdit" hidden data-t>إلغاء</button></div></form></section>
-<section class="panel"><div class="section-title"><h2 data-t>📅 سجل الأيام</h2><span class="muted" data-t>اختار يوم</span></div><div class="calendar-head"><button class="secondary" id="prevMonth" aria-label="الشهر السابق">‹</button><strong id="monthTitle"></strong><button class="secondary" id="nextMonth" aria-label="الشهر التالي">›</button></div><div class="calgrid" id="calendar"></div><div class="history-stat"><div class="stat"><strong id="histPercent">—</strong><span data-t>إنجاز اليوم</span></div><div class="stat"><strong id="histDone">—</strong><span data-t>مكتملة</span></div><div class="stat"><strong id="histTotal">—</strong><span data-t>إجمالي المهام</span></div></div><div class="muted" id="historyLabel">ملخص اليوم المختار</div><div id="historyList" class="tasklist" style="margin-top:12px"></div></section>
-<section class="panel"><div class="reminder-line"><div><strong data-t>⏰ التذكير بالمهام المتبقية</strong><div class="muted" style="margin-top:5px" data-t>من 12 ظهرًا لحد 12 بالليل</div></div><select id="everySel" aria-label="تكرار التذكير" style="padding:8px;border-radius:10px"><option value="1" data-t>كل ساعة</option><option value="2" data-t>كل ساعتين</option></select> <input type="checkbox" id="hourlyToggle" aria-label="تفعيل التذكير كل ساعة" style="width:21px;height:21px;accent-color:var(--site-primary)"></div><p class="notice" data-t>التذكير بيشتغل طالما الصفحة مفتوحة (حتى في تبويب خلفي). لو المتصفح مقفول مفيش إشعار هيوصل، لأن ده محتاج خدمة إشعارات على سيرفر. ولو الإشعارات مش مسموحة هيظهر لك التذكير جوه الصفحة.</p></section></aside></div>
+<section class="panel" id="homeGoal" hidden aria-live="polite"></section>
+<div class="layout"><main class="panel"><div class="section-title"><h2 data-t>مهامك</h2><span class="muted" id="taskCount">0 مهام</span></div><div class="tabs" id="filters"><button class="active" data-filter="all" data-t>الكل</button><button data-filter="open" data-t>لسه متعملتش</button><button data-filter="done" data-t>مكتملة</button></div><div class="tabs catchips" id="catFilters" role="group"></div><div class="tasklist" id="taskList"></div><div class="notice" data-t>اليوم عندك في يومي بيبدأ الساعة 2:00 صباحًا، مش الساعة 12 بالليل.</div></main>
+<aside class="side-stack"><section class="panel"><div class="section-title"><h2 id="formTitle">➕ مهمة جديدة</h2><span class="muted" data-t>خطط ليومك</span></div><form id="taskForm"><input type="hidden" id="editId"><div class="formgrid"><div class="field full"><label for="taskName" data-t>اسم المهمة</label><input id="taskName" required maxlength="100" placeholder="مثلاً: أراجع محاضرة الخوارزميات"></div><div class="field"><label for="taskTime" data-t>الوقت (اختياري)</label><input id="taskTime" type="time"></div><div class="field"><label for="taskType" data-t>التكرار</label><select id="taskType"><option value="daily" data-t>كل يوم</option><option value="weekly" data-t>كل أسبوع</option><option value="once" data-t>مرة واحدة</option></select></div><div class="field full" id="weekField" hidden><label for="taskDay" data-t>يوم التكرار</label><select id="taskDay"><option value="0" data-t>الأحد</option><option value="1" data-t>الاثنين</option><option value="2" data-t>الثلاثاء</option><option value="3" data-t>الأربعاء</option><option value="4" data-t>الخميس</option><option value="5" data-t>الجمعة</option><option value="6" data-t>السبت</option></select></div><div class="field full" id="onceField" hidden><label for="taskDate" data-t>تاريخ المهمة</label><input id="taskDate" type="date"></div><div class="field full"><label for="taskCat" data-t>التصنيف (اختياري)</label><select id="taskCat"></select></div><div class="field full"><label for="taskNotes" data-t>ملاحظات (اختياري)</label><textarea id="taskNotes" rows="3" maxlength="1000"></textarea></div></div><div class="formbuttons"><button type="submit" id="saveBtn">حفظ المهمة</button><button type="button" class="secondary" id="cancelEdit" hidden data-t>إلغاء</button></div></form></section>
+<section class="panel catmgr"><details><summary><span data-t>🏷️ إدارة التصنيفات</span></summary><div class="catbody"><div class="catlist" id="catList"></div><form id="catForm" class="catform"><input type="hidden" id="catEditId"><input type="text" id="catName" maxlength="30" required autocomplete="off"><button type="submit" id="catSave"></button><button type="button" class="secondary" id="catCancel" hidden></button></form></div></details></section>
+</aside></div></div><div class="view" id="view-stats" hidden>
+<div class="stats-grid" id="statsKpis"></div>
+<div class="stats-row">
+<section class="panel" id="chartPanel"><div class="section-title"><h2 id="chartTitle">آخر 7 أيام</h2></div><div class="tabs range-tabs" id="rangeTabs" role="group"><button type="button" data-range="7">7</button><button type="button" data-range="30">30</button><button type="button" data-range="90">90</button></div><div class="bars" id="statsBars"></div><div class="bars-axis" id="statsAxis" hidden></div><p class="notice chart-note" id="statsChartNote"></p></section>
+<section class="panel"><div class="section-title"><h2 data-i-ar="أكتر المهام التزامًا" data-i-en="Most consistent tasks">أكتر المهام التزامًا</h2></div><div id="statsTop"></div></section>
+</div>
+<section class="panel stats-panel" id="weeklyPanel"><div class="section-title"><h2 id="weeklyTitle">الإحصائيات الأسبوعية</h2><span class="muted" id="weeklyRange"></span></div><div class="stats-grid" id="weeklyKpis"></div><div class="muted" id="weeklyCmp"></div><h3 class="sub-title" id="weeklyCatTitle"></h3><div id="weeklyCats"></div><p class="notice" id="weeklyNote"></p></section>
+<section class="panel stats-panel" id="monthlyPanel"><div class="section-title"><h2 id="monthTitleH">🗓️ المراجعة الشهرية</h2></div><div class="calendar-head"><button type="button" class="secondary" id="mPrev">‹</button><strong id="mTitle"></strong><button type="button" class="secondary" id="mNext">›</button></div><div class="stats-grid" id="monthKpis"></div><div class="muted" id="monthCmp"></div><div class="streak-sum" id="monthStreak" style="margin-top:12px"></div><h3 class="sub-title" id="monthChartTitle"></h3><div class="bars dense" id="monthBars"></div><div class="bars-axis" id="monthAxis"></div><h3 class="sub-title" id="monthGoalsTitle"></h3><div id="monthGoals"></div><p class="notice" id="monthNote"></p></section>
+<section class="panel stats-panel" id="streakPanel"><div class="section-title"><h2 id="streakTitle">🔥 السلسلة</h2></div><div class="streak-ctl"><label for="thrInput" id="thrLabel"></label><input id="thrInput" type="number" min="1" max="100" step="1" inputmode="numeric"><span class="muted">%</span></div><div class="streak-sum" id="streakSum"></div><div class="scal-wrap"><div class="calendar-head"><button type="button" class="secondary" id="sPrev">‹</button><strong id="sTitle"></strong><button type="button" class="secondary" id="sNext">›</button></div><div class="scal" id="streakCal"></div><div class="legend" id="streakLegend"></div></div><p class="notice" id="streakNote"></p></section>
+<p class="notice" data-i-ar="اليوم الكامل هو يوم خلصت فيه كل مهامك. الأرقام بتتحسب من الأيام المسجلة في سجل الأيام." data-i-en="A perfect day is a day you completed all your tasks. Numbers are calculated from the days saved in your history.">اليوم الكامل هو يوم خلصت فيه كل مهامك. الأرقام بتتحسب من الأيام المسجلة في سجل الأيام.</p>
+</div>
+<div class="view" id="view-goals" hidden>
+<section id="myGoals">
+<div class="section-title"><h2 data-i-ar="🎯 أهدافي" data-i-en="🎯 My goals">🎯 أهدافي</h2><button type="button" id="gNew" data-i-ar="➕ هدف جديد" data-i-en="➕ New goal">➕ هدف جديد</button></div>
+<section class="panel" id="gFormPanel" hidden><div class="section-title"><h2 id="gFormTitle">➕ هدف جديد</h2></div>
+<form id="gForm"><div class="formgrid">
+<div class="field gfull"><label for="gfName" data-i-ar="اسم الهدف" data-i-en="Goal name">اسم الهدف</label><input id="gfName" required maxlength="80"></div>
+<div class="field gfull"><label for="gfDesc" data-i-ar="الوصف" data-i-en="Description">الوصف</label><textarea id="gfDesc" rows="2" maxlength="400"></textarea></div>
+<div class="field"><label for="gfType" data-i-ar="نوع الهدف" data-i-en="Goal type">نوع الهدف</label><select id="gfType"><option value="completion" data-i-ar="إنجاز (عدد مهام)" data-i-en="Completion (number of tasks)">إنجاز (عدد مهام)</option><option value="habit" data-i-ar="عادة (أيام متتالية/مدة)" data-i-en="Habit (days maintained)">عادة (أيام متتالية/مدة)</option><option value="numeric" data-i-ar="رقمي (الوصول لقيمة)" data-i-en="Numeric (reach a value)">رقمي (الوصول لقيمة)</option></select></div>
+<div class="field"><label for="gfCat" data-i-ar="التصنيف" data-i-en="Category">التصنيف</label><select id="gfCat"></select></div>
+<div class="field"><label for="gfStart" data-i-ar="تاريخ البداية" data-i-en="Start date">تاريخ البداية</label><input id="gfStart" type="date" required></div>
+<div class="field"><label for="gfEnd" data-i-ar="الموعد النهائي" data-i-en="Deadline">الموعد النهائي</label><input id="gfEnd" type="date" required></div>
+<div class="field gfull" id="gfCountGrp"><label for="gfTarget" id="gfTargetLbl"></label><input id="gfTarget" type="number" min="1" step="1" inputmode="numeric"></div>
+<div class="gfull" id="gfNumGrp" hidden><div class="formgrid">
+<div class="field"><label for="gfFrom" data-i-ar="قيمة البداية" data-i-en="Starting value">قيمة البداية</label><input id="gfFrom" type="number" step="any" inputmode="decimal"></div>
+<div class="field"><label for="gfTo" data-i-ar="القيمة المستهدفة" data-i-en="Target value">القيمة المستهدفة</label><input id="gfTo" type="number" step="any" inputmode="decimal"></div>
+<div class="field"><label for="gfNow" data-i-ar="القيمة الحالية" data-i-en="Current value">القيمة الحالية</label><input id="gfNow" type="number" step="any" inputmode="decimal"></div>
+<div class="field"><label for="gfUnit" data-i-ar="الوحدة (اختياري)" data-i-en="Unit (optional)">الوحدة (اختياري)</label><input id="gfUnit" maxlength="12"></div>
+<div class="field gfull"><label for="gfStep" data-i-ar="مقدار يضيفه كل مهمة مرتبطة مكتملة (اختياري)" data-i-en="Amount added by each completed linked task (optional)">مقدار يضيفه كل مهمة مرتبطة مكتملة (اختياري)</label><input id="gfStep" type="number" step="any" inputmode="decimal"></div>
+</div></div>
+<p class="notice gfull" id="gfHint" style="margin:0"></p>
+<label class="gfull" style="display:flex;align-items:center;gap:8px;font-size:14px"><input id="gfMain" type="checkbox" style="width:18px;height:18px;accent-color:var(--site-primary)"><span data-i-ar="خليه هدفي الرئيسي (يظهر في الصفحة الرئيسية)" data-i-en="Make this my main goal (shown on Home)">خليه هدفي الرئيسي (يظهر في الصفحة الرئيسية)</span></label>
+</div><div class="formbuttons"><button type="submit" id="gfSave">حفظ الهدف</button><button type="button" class="secondary" id="gfCancel" data-i-ar="إلغاء" data-i-en="Cancel">إلغاء</button></div></form></section>
+<div class="tabs" id="mgTabs" role="group"></div>
+<div id="mgList"></div>
+<p class="notice" id="mgNote"></p>
+</section>
+<div class="section-title"><h2 data-i-ar="🎯 الإنجازات والأهداف" data-i-en="🎯 Milestones & goals">🎯 الإنجازات والأهداف</h2><span class="muted" id="goalsSummary"></span></div>
+<div class="goals-grid" id="goalsGrid"></div>
+</div>
+<div class="view" id="view-history" hidden><section class="panel"><div class="section-title"><h2 data-t>📅 سجل الأيام</h2><span class="muted" data-t>اختار يوم</span></div><div class="history-grid"><div class="hist-cal"><div class="calendar-head"><button class="secondary" id="prevMonth" aria-label="الشهر السابق">‹</button><strong id="monthTitle"></strong><button class="secondary" id="nextMonth" aria-label="الشهر التالي">›</button></div><div class="calgrid" id="calendar"></div></div><div class="hist-detail"><div class="history-stat"><div class="stat"><strong id="histPercent">—</strong><span data-t>إنجاز اليوم</span></div><div class="stat"><strong id="histDone">—</strong><span data-t>مكتملة</span></div><div class="stat"><strong id="histTotal">—</strong><span data-t>إجمالي المهام</span></div></div><div class="muted" id="historyLabel">ملخص اليوم المختار</div><div id="historyList" class="tasklist" style="margin-top:12px"></div></div></div></section></div>
 </div><div class="toast" id="toast" role="status"></div>
 <script>
 (()=> {
@@ -33,7 +253,7 @@ const STORE='yommy_web_v1';
 const THEME_STORE='yommy_theme_v1';
 const LANG_STORE='yommy_lang_v1';let lang='ar';try{lang=localStorage.getItem(LANG_STORE)||'ar'}catch(e){}
 const L=(ar,en)=>lang==='en'?en:ar;window.L=L;
-const EN={"خطوة صغيرة كل يوم 🌱": "One small step every day 🌱", "🔐 دخول بجوجل": "🔐 Sign in with Google", "📲 تثبيت التطبيق": "📲 Install app", "🔔 تفعيل التنبيهات": "🔔 Enable notifications", "تصدير البيانات": "Export data", "⬆️ استيراد": "⬆️ Import", "مهامك": "Your tasks", "الكل": "All", "لسه متعملتش": "Not done yet", "مكتملة": "Completed", "اليوم عندك في يومي بيبدأ الساعة 2:00 صباحًا، مش الساعة 12 بالليل.": "Your day in Yommy starts at 2:00 AM, not at midnight.", "خطط ليومك": "Plan your day", "اسم المهمة": "Task name", "الوقت (اختياري)": "Time (optional)", "التكرار": "Repeat", "كل يوم": "Every day", "كل أسبوع": "Every week", "مرة واحدة": "Once", "يوم التكرار": "Repeat on", "الأحد": "Sunday", "الاثنين": "Monday", "الثلاثاء": "Tuesday", "الأربعاء": "Wednesday", "الخميس": "Thursday", "الجمعة": "Friday", "السبت": "Saturday", "تاريخ المهمة": "Task date", "إلغاء": "Cancel", "📅 سجل الأيام": "📅 Day history", "اختار يوم": "Pick a day", "إنجاز اليوم": "Day progress", "إجمالي المهام": "Total tasks", "⏰ التذكير بالمهام المتبقية": "⏰ Reminders for remaining tasks", "من 12 ظهرًا لحد 12 بالليل": "From 12 PM until 12 AM", "كل ساعة": "Every hour", "كل ساعتين": "Every 2 hours", "التذكير بيشتغل طالما الصفحة مفتوحة (حتى في تبويب خلفي). لو المتصفح مقفول مفيش إشعار هيوصل، لأن ده محتاج خدمة إشعارات على سيرفر. ولو الإشعارات مش مسموحة هيظهر لك التذكير جوه الصفحة.": "Reminders work while the page is open (even in a background tab). If the browser is closed no notification will arrive, since that needs a push service on a server. If notifications are blocked, the reminder appears inside the page instead."};
+const EN={"خطوة صغيرة كل يوم 🌱": "One small step every day 🌱", "🔐 دخول بجوجل": "🔐 Sign in with Google", "📲 تثبيت التطبيق": "📲 Install app", "🔔 تفعيل التنبيهات": "🔔 Enable notifications", "تصدير البيانات": "Export data", "⬆️ استيراد": "⬆️ Import", "مهامك": "Your tasks", "الكل": "All", "لسه متعملتش": "Not done yet", "مكتملة": "Completed", "اليوم عندك في يومي بيبدأ الساعة 2:00 صباحًا، مش الساعة 12 بالليل.": "Your day in Yommy starts at 2:00 AM, not at midnight.", "خطط ليومك": "Plan your day", "اسم المهمة": "Task name", "الوقت (اختياري)": "Time (optional)", "التكرار": "Repeat", "كل يوم": "Every day", "كل أسبوع": "Every week", "مرة واحدة": "Once", "يوم التكرار": "Repeat on", "الأحد": "Sunday", "الاثنين": "Monday", "الثلاثاء": "Tuesday", "الأربعاء": "Wednesday", "الخميس": "Thursday", "الجمعة": "Friday", "السبت": "Saturday", "تاريخ المهمة": "Task date", "إلغاء": "Cancel", "📅 سجل الأيام": "📅 Day history", "اختار يوم": "Pick a day", "إنجاز اليوم": "Day progress", "إجمالي المهام": "Total tasks", "⏰ التذكير بالمهام المتبقية": "⏰ Reminders for remaining tasks", "اختياري: كل 3 ساعات، من 12 ظهرًا لحد 12 بالليل": "Optional: every 3 hours, from 12 PM until 12 AM", "التصنيف (اختياري)": "Category (optional)", "ملاحظات (اختياري)": "Notes (optional)", "🏷️ إدارة التصنيفات": "🏷️ Manage categories", "التذكير بيشتغل طالما الصفحة مفتوحة (حتى في تبويب خلفي). لو المتصفح مقفول مفيش إشعار هيوصل، لأن ده محتاج خدمة إشعارات على سيرفر. ولو الإشعارات مش مسموحة هيظهر لك التذكير جوه الصفحة.": "Reminders work while the page is open (even in a background tab). If the browser is closed no notification will arrive, since that needs a push service on a server. If notifications are blocked, the reminder appears inside the page instead."};
 const shortDays=()=>lang==='en'?['Sun','Mon','Tue','Wed','Thu','Fri','Sat']:['أحد','اثنين','ثلاثاء','أربعاء','خميس','جمعة','سبت'];
 const loc=()=>lang==='en'?'en-US':'ar-EG';let uname='';
 function setLogout(){$('logoutBtn').textContent=uname?L('خروج — ','Sign out — ')+uname:L('خروج','Sign out')}
@@ -43,11 +263,11 @@ document.querySelectorAll('[data-t]').forEach(el=>{if(!el.dataset.ar)el.dataset.
 $('langBtn').textContent=l==='en'?'عربي':'English';
 $('taskName').placeholder=L('مثلاً: أراجع محاضرة الخوارزميات','e.g. Review the algorithms lecture');
 $('prevMonth').setAttribute('aria-label',L('الشهر السابق','Previous month'));$('nextMonth').setAttribute('aria-label',L('الشهر التالي','Next month'));
-$('everySel').setAttribute('aria-label',L('تكرار التذكير','Reminder frequency'));$('hourlyToggle').setAttribute('aria-label',L('تفعيل التذكير','Enable reminders'));
+$('hourlyToggle').setAttribute('aria-label',L('تفعيل التذكير','Enable reminders'));
 const ed=!!$('editId').value;$('formTitle').textContent=ed?L('✏️ تعديل المهمة','✏️ Edit task'):L('➕ مهمة جديدة','➕ New task');$('saveBtn').textContent=ed?L('حفظ التعديلات','Save changes'):L('حفظ المهمة','Save task');
 setLogout();if(document.documentElement.dataset.theme)applyTheme(document.documentElement.dataset.theme,false);render()}
 const names=['الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];
-let pushApi=null;let state={tasks:[],history:{},hourly:false,every:1,lastDay:'',updated:0},store=null,lastSaved='',notified={};try{notified=JSON.parse(localStorage.getItem('yommy_notified')||'{}')}catch(e){}
+let pushApi=null;let state={tasks:[],history:{},hourly:false,every:3,categories:[],lastDay:'',updated:0},store=null,lastSaved='',notified={};try{notified=JSON.parse(localStorage.getItem('yommy_notified')||'{}')}catch(e){}
 let filter='all', selectedDate='', viewYear=0, viewMonth=0, lastRenderedToday='', toastTimer;
 const pad=n=>String(n).padStart(2,'0');
 const key=d=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
@@ -55,7 +275,7 @@ function logicalDate(now=new Date()){let d=new Date(now);if(d.getHours()<2)d.set
 function parseDate(s){let [y,m,d]=s.split('-').map(Number);return new Date(y,m-1,d,12)}
 function today(){return logicalDate()}
 function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
-function save(){const sig=JSON.stringify({...state,updated:0});if(sig===lastSaved)return;lastSaved=sig;state.updated=Date.now();const j=JSON.stringify(state);try{localStorage.setItem(STORE,j)}catch(e){}if(store)store.set({json:j}).catch(()=>{})}
+function save(){state.every=3;const sig=JSON.stringify({...state,updated:0});if(sig===lastSaved)return;lastSaved=sig;state.updated=Date.now();const j=JSON.stringify(state);try{localStorage.setItem(STORE,j)}catch(e){}if(store)store.set({json:j}).catch(()=>{})}
 /* Idempotent rollover: runs on open, on focus and every minute. Saves the finished day's snapshot BEFORE resetting. */
 function rollover(){const t=today();if(!state.lastDay){state.lastDay=t;save();return}if(state.lastDay>=t)return;const old=state.lastDay;
 const recs=activeTasks(old).map(x=>({id:x.id,name:x.name,time:x.time||'',type:x.type,done:!!x.done}));const dn=recs.filter(r=>r.done).length;
@@ -68,7 +288,7 @@ function mergeState(r){if(!r||!Array.isArray(r.tasks))return;const newer=(r.upda
 function cloudInit(){window.yommyHooks={
 ready(api){pushApi=api;$('loginBtn').onclick=()=>api.login();$('logoutBtn').onclick=()=>api.logout()},
 user(u,api){const li=!!u;$('loginBtn').hidden=li;$('logoutBtn').hidden=!li;if(!li){store=null;uname='';return}uname=(u.displayName||u.email||'').split(' ')[0];setLogout();store={set:({json})=>api.push(json)};if(state.hourly)registerPush(false)},
-remote(json,first){try{if(first)lastSaved='';mergeState(JSON.parse(json));$('hourlyToggle').checked=!!state.hourly;$('everySel').value=String(state.every||1);render();if(first)showToast(L('تمت المزامنة مع حسابك ☁️','Synced with your account ☁️'))}catch(e){}},
+remote(json,first){try{if(first)lastSaved='';mergeState(JSON.parse(json));$('hourlyToggle').checked=!!state.hourly;render();if(first)showToast(L('تمت المزامنة مع حسابك ☁️','Synced with your account ☁️'))}catch(e){}},
 empty(){lastSaved='';save();showToast(L('تم ربط حسابك ☁️','Account linked ☁️'))},
 error(m){showToast(m,5000)}}}
 function load(){try{let x=JSON.parse(localStorage.getItem(STORE));if(x&&Array.isArray(x.tasks))state={...state,...x}}catch(e){}}
@@ -77,30 +297,65 @@ function snapshot(date){let tasks=activeTasks(date);let old=state.history[date];
 function recordToday(){let d=today(), snap=snapshot(d);state.history[d]={records:snap.records,done:snap.done,total:snap.total,percent:snap.percent};save()}
 function showToast(msg,ms=2600){$('toast').textContent=msg;$('toast').style.display='block';clearTimeout(toastTimer);toastTimer=setTimeout(()=>$('toast').style.display='none',ms)}
 function fmtDate(d){return d.toLocaleDateString(loc(),{weekday:'long',day:'numeric',month:'long'})}
+/* ===== Stage 4 & 5: categories and notes (additive; data lives in state.categories, task.cat, task.notes) ===== */
+const DEFAULT_CATS=[{id:'study',ico:'📚',ar:'دراسة',en:'Study'},{id:'gym',ico:'🏋️',ar:'جيم',en:'Gym'},{id:'personal',ico:'🧑',ar:'شخصي',en:'Personal'},{id:'work',ico:'💼',ar:'شغل',en:'Work'},{id:'health',ico:'❤️',ar:'صحة',en:'Health'}];
+let catFilter='all',catSig='';const openNotes=new Set();
+const customCats=()=>Array.isArray(state.categories)?state.categories.filter(c=>c&&typeof c.id==='string'&&typeof c.name==='string'&&c.name.trim()):[];
+const allCats=()=>[...DEFAULT_CATS.map(c=>({id:c.id,ico:c.ico,name:L(c.ar,c.en),def:true})),...customCats().map(c=>({id:c.id,ico:'🏷️',name:c.name,def:false}))];
+const catById=id=>id?(allCats().find(c=>c.id===id)||null):null;
+const effFilter=()=>(catFilter==='all'||catFilter==='none'||catById(catFilter))?catFilter:'all';
+const catMatch=t=>{const f=effFilter();return f==='all'||(f==='none'?!catById(t.cat):t.cat===f)};
+const catChip=t=>{const c=catById(t.cat);return c?`<span class="catchip" dir="auto">${c.ico} ${esc(c.name)}</span>`:''};
+const notesBtn=t=>(t.notes||'').trim()?`<button type="button" class="notes-btn" data-action="notes" data-id="${esc(t.id)}" aria-expanded="${openNotes.has(t.id)}">📝 ${L('ملاحظات','Notes')}</button>`:'';
+const notesBox=t=>{const n=(t.notes||'').trim();return n?`<div class="tnotes" dir="auto"${openNotes.has(t.id)?'':' hidden'}>${esc(n)}</div>`:''};
+function renderCats(){
+const editing=$('catEditId').value;
+$('catSave').textContent=editing?L('حفظ','Save'):L('إضافة','Add');$('catCancel').textContent=L('إلغاء','Cancel');
+$('catName').placeholder=L('اسم تصنيف جديد','New category name');$('catName').setAttribute('aria-label',L('اسم التصنيف','Category name'));
+$('taskNotes').placeholder=L('تفاصيل إضافية…','Extra details…');$('catFilters').setAttribute('aria-label',L('تصفية حسب التصنيف','Filter by category'));
+const sig=lang+'|'+JSON.stringify(customCats());
+if(sig!==catSig){catSig=sig;const cats=allCats(),sel=$('taskCat'),cur=sel.value;
+sel.innerHTML=`<option value="">${L('— بدون تصنيف —','— No category —')}</option>`+cats.map(c=>`<option value="${esc(c.id)}">${c.ico} ${esc(c.name)}</option>`).join('');
+sel.value=cats.some(c=>c.id===cur)?cur:'';
+$('catFilters').innerHTML=[{id:'all',name:L('كل التصنيفات','All categories')},...cats,{id:'none',name:L('بدون تصنيف','Uncategorized')}].map(c=>`<button type="button" data-cat="${esc(c.id)}" dir="auto">${c.ico?c.ico+' ':''}${esc(c.name)}</button>`).join('');
+$('catList').innerHTML=cats.map(c=>c.def?`<div class="catrow"><span class="catname" dir="auto">${c.ico} ${esc(c.name)}</span><span class="pill">${L('افتراضي','Default')}</span></div>`:`<div class="catrow"><span class="catname" dir="auto">${c.ico} ${esc(c.name)}</span><span class="catbtns"><button type="button" class="secondary" data-cat-action="edit" data-id="${esc(c.id)}">${L('تعديل','Edit')}</button><button type="button" class="danger" data-cat-action="delete" data-id="${esc(c.id)}">${L('حذف','Delete')}</button></span></div>`).join('')}
+const f=effFilter();$('catFilters').querySelectorAll('button').forEach(b=>{const on=b.dataset.cat===f;b.classList.toggle('active',on);b.setAttribute('aria-pressed',String(on))})}
+function resetCatForm(){$('catEditId').value='';$('catName').value='';$('catCancel').hidden=true}
+$('catFilters').addEventListener('click',e=>{const b=e.target.closest('button[data-cat]');if(!b)return;catFilter=b.dataset.cat;render()});
+$('taskList').addEventListener('click',e=>{const b=e.target.closest('button[data-action="notes"]');if(!b)return;const box=b.closest('.taskbody')?.querySelector('.tnotes');if(!box)return;const open=box.hidden;box.hidden=!open;b.setAttribute('aria-expanded',String(open));if(open)openNotes.add(b.dataset.id);else openNotes.delete(b.dataset.id)});
+$('catForm').addEventListener('submit',e=>{e.preventDefault();const id=$('catEditId').value,name=$('catName').value.trim().slice(0,30);if(!name)return;const n=name.toLowerCase();
+if(customCats().some(c=>c.id!==id&&c.name.trim().toLowerCase()===n)||DEFAULT_CATS.some(c=>c.ar===name||c.en.toLowerCase()===n)){showToast(L('التصنيف ده موجود بالفعل','This category already exists'));return}
+if(id)state.categories=customCats().map(c=>c.id===id?{...c,name}:c);else state.categories=[...customCats(),{id:'c_'+crypto.randomUUID().slice(0,8),name}];
+save();resetCatForm();render();showToast(id?L('تم تعديل التصنيف','Category updated'):L('اتضاف التصنيف','Category added'))});
+$('catCancel').onclick=()=>{resetCatForm();render()};
+$('catList').addEventListener('click',e=>{const b=e.target.closest('button[data-cat-action]');if(!b)return;const c=customCats().find(x=>x.id===b.dataset.id);if(!c)return;
+if(b.dataset.catAction==='edit'){$('catEditId').value=c.id;$('catName').value=c.name;$('catCancel').hidden=false;render();$('catName').focus();return}
+if(confirm(L('متأكد إنك عايز تحذف التصنيف؟ المهام هتفضل موجودة بدون تصنيف.','Delete this category? Its tasks will be kept without a category.'))){
+state.tasks.forEach(t=>{if(t.cat===c.id)t.cat=''});state.categories=customCats().filter(x=>x.id!==c.id);if(catFilter===c.id)catFilter='all';if($('catEditId').value===c.id)resetCatForm();
+save();render();showToast(L('تم حذف التصنيف','Category deleted'))}});
 function render(){const d=today(), dt=parseDate(d), tasks=activeTasks(d);const done=tasks.filter(t=>t.done).length,p=tasks.length?Math.round(done/tasks.length*100):0;
 $('dateLabel').textContent=fmtDate(dt);$('greeting').textContent=new Date().getHours()<12?L('صباح الخير 👋','Good morning 👋'):new Date().getHours()<18?L('نهارك سعيد 👋','Good afternoon 👋'):L('مساء الخير 👋','Good evening 👋');$('welcomeText').textContent=p===100&&tasks.length?L('عاش! خلصت كل مهامك النهارده 🎉','Well done! You finished all your tasks today 🎉'):L('ابدأ بالمهمة الأسهل وخدها واحدة واحدة.','Start with the easiest task and take them one by one.');$('progressFill').style.width=p+'%';$('percent').textContent=p+'%';$('progressCaption').textContent=L(`${done} من ${tasks.length} مهام مكتملة`,`${done} of ${tasks.length} tasks completed`);$('taskCount').textContent=L(`${tasks.length} مهام`,`${tasks.length} tasks`);
-let visible=tasks.filter(t=>filter==='all'||(filter==='open'&&!t.done)||(filter==='done'&&t.done));$('taskList').innerHTML=visible.length?visible.sort((a,b)=>(a.time||'99:99').localeCompare(b.time||'99:99')).map(t=>`<article class="task ${t.done?'done':''}"><button class="check ${t.done?'checked':''}" data-action="toggle" data-id="${esc(t.id)}" aria-label="${L('تغيير حالة المهمة','Toggle task')}">${t.done?'✓':''}</button><div class="taskbody"><div class="taskname">${esc(t.name)}</div><div class="taskmeta"><span>${t.time?'🕒 '+t.time:L('من غير وقت','No time')}</span><span>${t.type==='daily'?L('يومي','Daily'):t.type==='weekly'?L('أسبوعي','Weekly'):L('مرة واحدة','Once')}</span></div></div><div class="task-actions"><button class="secondary" data-action="edit" data-id="${esc(t.id)}">${L('تعديل','Edit')}</button><button class="danger" data-action="delete" data-id="${esc(t.id)}">${L('حذف','Delete')}</button></div></article>`).join(''):`<div class="empty"><div class="emoji">🌿</div><strong>${L('مفيش مهام هنا لسه','No tasks here yet')}</strong><p>${L('ضيف أول مهمة من الفورم اللي جنبك.','Add your first task using the form.')}</p></div>`;
-renderCalendar();renderHistory();recordToday()}
+let visible=tasks.filter(t=>filter==='all'||(filter==='open'&&!t.done)||(filter==='done'&&t.done)).filter(catMatch);$('taskList').innerHTML=visible.length?visible.sort((a,b)=>(a.time||'99:99').localeCompare(b.time||'99:99')).map(t=>`<article class="task ${t.done?'done':''}"><button class="check ${t.done?'checked':''}" data-action="toggle" data-id="${esc(t.id)}" aria-label="${L('تغيير حالة المهمة','Toggle task')}">${t.done?'✓':''}</button><div class="taskbody"><div class="taskname">${esc(t.name)}</div><div class="taskmeta"><span>${t.time?'🕒 '+t.time:L('من غير وقت','No time')}</span><span>${t.type==='daily'?L('يومي','Daily'):t.type==='weekly'?L('أسبوعي','Weekly'):L('مرة واحدة','Once')}</span>${catChip(t)}${notesBtn(t)}</div>${notesBox(t)}</div><div class="task-actions"><button class="secondary" data-action="edit" data-id="${esc(t.id)}">${L('تعديل','Edit')}</button><button class="danger" data-action="delete" data-id="${esc(t.id)}">${L('حذف','Delete')}</button></div></article>`).join(''):`<div class="empty"><div class="emoji">🌿</div><strong>${L('مفيش مهام هنا لسه','No tasks here yet')}</strong><p>${L('ضيف أول مهمة من الفورم اللي جنبك.','Add your first task using the form.')}</p></div>`;
+renderCats();renderCalendar();renderHistory();recordToday()}
 function renderCalendar(){let first=new Date(viewYear,viewMonth,1),offset=first.getDay(),days=new Date(viewYear,viewMonth+1,0).getDate();$('monthTitle').textContent=first.toLocaleDateString(loc(),{month:'long',year:'numeric'});let out=shortDays().map(n=>`<div class="weekday">${n}</div>`).join('');for(let i=0;i<offset;i++)out+='<div class="day other"></div>';for(let day=1;day<=days;day++){let d=`${viewYear}-${pad(viewMonth+1)}-${pad(day)}`,hist=state.history[d],isToday=d===today();out+=`<button class="day ${d===selectedDate?'selected':''} ${isToday?'today':''} ${hist?'hasdata':''}" data-date="${d}" title="${hist?hist.percent+L('% إنجاز','% done'):''}">${day}</button>`}$('calendar').innerHTML=out}
 function renderHistory(){if(!selectedDate)selectedDate=today();let s=state.history[selectedDate];if(!s){s=selectedDate===today()?snapshot(selectedDate):{records:[],done:0,total:0,percent:0}}$('histPercent').textContent=(s.total?s.percent:0)+'%';$('histDone').textContent=s.done||0;$('histTotal').textContent=s.total||0;$('historyLabel').textContent=selectedDate===today()?L('ملخص النهارده',"Today's summary"):L('ملخص ','Summary for ')+fmtDate(parseDate(selectedDate));$('historyList').innerHTML=s.records?.length?s.records.map(r=>`<article class="task ${r.done?'done':''}"><span>${r.done?'✅':'◯'}</span><div class="taskbody"><div class="taskname">${esc(r.name)}</div><div class="taskmeta">${r.time?'🕒 '+r.time:''}</div></div></article>`).join(''):`<div class="muted" style="padding:12px 0">${L('مفيش سجل محفوظ لليوم ده. ده معناه إن الموقع ماتفتحش اليوم ده، مش إنك ماخلصتش مهامك.','No record saved for this day. That means the app was not opened that day, not that you did not finish your tasks.')}</div>`}
 function resetForm(){ $('taskForm').reset();$('editId').value='';$('formTitle').textContent=L('➕ مهمة جديدة','➕ New task');$('saveBtn').textContent=L('حفظ المهمة','Save task');$('cancelEdit').hidden=true;$('weekField').hidden=true;$('onceField').hidden=true}
 $('taskType').addEventListener('change',()=>{$('weekField').hidden=$('taskType').value!=='weekly';$('onceField').hidden=$('taskType').value!=='once'});
-$('taskForm').addEventListener('submit',e=>{e.preventDefault();let id=$('editId').value,old=state.tasks.find(t=>t.id===id),type=$('taskType').value;let t={id:id||crypto.randomUUID(),name:$('taskName').value.trim(),time:$('taskTime').value,type,weekday:$('taskDay').value,date:type==='once'?($('taskDate').value||today()):'',done:old?old.done:false};if(!t.name)return;if(old)state.tasks=state.tasks.map(x=>x.id===id?t:x);else state.tasks.push(t);resetForm();recordToday();render();showToast(old?L('تم تعديل المهمة','Task updated'):L('اتضافت المهمة بنجاح','Task added'))});
+$('taskForm').addEventListener('submit',e=>{e.preventDefault();let id=$('editId').value,old=state.tasks.find(t=>t.id===id),type=$('taskType').value;let t={id:id||crypto.randomUUID(),name:$('taskName').value.trim(),time:$('taskTime').value,type,weekday:$('taskDay').value,date:type==='once'?($('taskDate').value||today()):'',done:old?old.done:false,cat:$('taskCat').value,notes:$('taskNotes').value.trim()};if(!t.name)return;if(old)state.tasks=state.tasks.map(x=>x.id===id?t:x);else state.tasks.push(t);resetForm();recordToday();render();showToast(old?L('تم تعديل المهمة','Task updated'):L('اتضافت المهمة بنجاح','Task added'))});
 $('cancelEdit').onclick=resetForm;
-$('taskList').addEventListener('click',e=>{let b=e.target.closest('button[data-action]');if(!b)return;let t=state.tasks.find(x=>x.id===b.dataset.id);if(!t)return;if(b.dataset.action==='toggle'){t.done=!t.done;recordToday();render()}if(b.dataset.action==='delete'){if(confirm(L('متأكد إنك عايز تحذف المهمة؟','Delete this task?'))){state.tasks=state.tasks.filter(x=>x.id!==t.id);recordToday();render();showToast(L('تم حذف المهمة','Task deleted'))}}if(b.dataset.action==='edit'){$('editId').value=t.id;$('taskName').value=t.name;$('taskTime').value=t.time;$('taskType').value=t.type;$('taskDay').value=t.weekday||'0';$('taskDate').value=t.date||today();$('weekField').hidden=t.type!=='weekly';$('onceField').hidden=t.type!=='once';$('formTitle').textContent=L('✏️ تعديل المهمة','✏️ Edit task');$('saveBtn').textContent=L('حفظ التعديلات','Save changes');$('cancelEdit').hidden=false;$('taskName').focus()}});
+$('taskList').addEventListener('click',e=>{let b=e.target.closest('button[data-action]');if(!b)return;let t=state.tasks.find(x=>x.id===b.dataset.id);if(!t)return;if(b.dataset.action==='toggle'){t.done=!t.done;recordToday();render()}if(b.dataset.action==='delete'){if(confirm(L('متأكد إنك عايز تحذف المهمة؟','Delete this task?'))){state.tasks=state.tasks.filter(x=>x.id!==t.id);recordToday();render();showToast(L('تم حذف المهمة','Task deleted'))}}if(b.dataset.action==='edit'){$('editId').value=t.id;$('taskName').value=t.name;$('taskTime').value=t.time;$('taskType').value=t.type;$('taskDay').value=t.weekday||'0';$('taskDate').value=t.date||today();$('taskCat').value=catById(t.cat)?t.cat:'';$('taskNotes').value=t.notes||'';$('weekField').hidden=t.type!=='weekly';$('onceField').hidden=t.type!=='once';$('formTitle').textContent=L('✏️ تعديل المهمة','✏️ Edit task');$('saveBtn').textContent=L('حفظ التعديلات','Save changes');$('cancelEdit').hidden=false;$('taskName').focus()}});
 $('filters').addEventListener('click',e=>{let b=e.target.closest('button[data-filter]');if(!b)return;filter=b.dataset.filter;[...$('filters').children].forEach(x=>x.classList.toggle('active',x===b));render()});
 $('calendar').addEventListener('click',e=>{let b=e.target.closest('button[data-date]');if(!b)return;selectedDate=b.dataset.date;renderCalendar();renderHistory()});
 $('prevMonth').onclick=()=>{viewMonth--;if(viewMonth<0){viewMonth=11;viewYear--}renderCalendar()};
 $('nextMonth').onclick=()=>{viewMonth++;if(viewMonth>11){viewMonth=0;viewYear++}renderCalendar()};
 $('langBtn').onclick=()=>applyLang(lang==='en'?'ar':'en');
-$('everySel').onchange=e=>{state.every=Number(e.target.value);save();showToast(L('اتحفظ التكرار','Frequency saved'))};
 $('importBtn').onclick=()=>$('importFile').click();
-$('importFile').onchange=async e=>{try{const r=JSON.parse(await e.target.files[0].text());if(!Array.isArray(r.tasks))throw 0;r.tasks=r.tasks.filter(t=>t&&typeof t.id==='string'&&typeof t.name==='string');if(!state.tasks.length&&!state.lastDay){state={...state,...r}}else{state.history={...r.history,...state.history};const ids=new Set(state.tasks.map(t=>t.id));r.tasks.forEach(t=>{if(!ids.has(t.id))state.tasks.push(t)})}lastSaved='';rollover();save();render();showToast(L('تم الاستيراد ✅','Import done ✅'))}catch(x){showToast(L('الملف غير صالح','Invalid file'))}e.target.value=''};
+$('importFile').onchange=async e=>{try{const r=JSON.parse(await e.target.files[0].text());if(!Array.isArray(r.tasks))throw 0;r.tasks=r.tasks.filter(t=>t&&typeof t.id==='string'&&typeof t.name==='string');if(!state.tasks.length&&!state.lastDay){state={...state,...r}}else{state.history={...r.history,...state.history};const ids=new Set(state.tasks.map(t=>t.id));r.tasks.forEach(t=>{if(!ids.has(t.id))state.tasks.push(t)})}if(Array.isArray(r.categories)){const have=new Set(customCats().map(c=>c.id));state.categories=[...customCats(),...r.categories.filter(c=>c&&typeof c.id==='string'&&typeof c.name==='string'&&!have.has(c.id))]}lastSaved='';rollover();save();render();showToast(L('تم الاستيراد ✅','Import done ✅'))}catch(x){showToast(L('الملف غير صالح','Invalid file'))}e.target.value=''};
 $('hourlyToggle').onchange=async e=>{state.hourly=e.target.checked;save();if(state.hourly)await requestPermission();showToast(state.hourly?L('تم تفعيل التذكير','Reminders on'):L('تم إيقاف التذكير','Reminders off'));if(state.hourly)registerPush(true)};
 async function registerPush(announce){if(!pushApi||!pushApi.enablePush||!store||!('Notification'in window)||Notification.permission!=='granted')return;try{await pushApi.enablePush();if(announce)showToast(L('تم تفعيل الإشعارات حتى والتطبيق مقفول ✅','Notifications enabled even when the app is closed ✅'),4000)}catch(e){console.error(e);if(announce)showToast(L('تعذّر تفعيل إشعارات الخلفية','Could not enable background notifications'),5000)}}
 async function requestPermission(){if('Notification'in window&&Notification.permission==='default'){try{await Notification.requestPermission()}catch(e){}}}
 $('notifyBtn').onclick=async()=>{if(!('Notification'in window)){showToast(L('المتصفح ده مش بيدعم الإشعارات','This browser does not support notifications'));return}await requestPermission();if(Notification.permission==='granted'){showToast(L('الإشعارات مسموح بها على المتصفح','Notifications are allowed'));registerPush(false)}else showToast(L('اسمح بالإشعارات من إعدادات المتصفح','Allow notifications in your browser settings'))};
-function reminders(){if(!state.hourly)return;const h=new Date().getHours(),off=(h-12+24)%24;if(off>12)return;if(state.every===2&&off%2)return;
+function reminders(){if(!state.hourly)return;const h=new Date().getHours(),off=(h-12+24)%24;if(off>12)return;if(off%3)return;
 const t=today(),k=t+'-'+h;if(notified[k])return;const pending=activeTasks(t).filter(x=>!x.done);if(!pending.length)return;
 notified[k]=1;Object.keys(notified).forEach(x=>{if(!x.startsWith(t))delete notified[x]});try{localStorage.setItem('yommy_notified',JSON.stringify(notified))}catch(e){}
 const list=pending.sort((a,b)=>(a.time||'99:99').localeCompare(b.time||'99:99')).slice(0,4).map(x=>(x.time?x.time+' ':'')+x.name).join(L('، ',', '));const title=L(`يومي — لسه ${pending.length} مهام`,`Yommy — ${pending.length} tasks left`);
@@ -119,9 +374,562 @@ load();rollover();cloudInit();document.addEventListener('visibilitychange',()=>{
 let savedTheme=null;try{savedTheme=localStorage.getItem(THEME_STORE)}catch(e){}
 let initialTheme=savedTheme||((window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light');
 applyTheme(initialTheme,false);
-let now=new Date();viewYear=now.getFullYear();viewMonth=now.getMonth();selectedDate=today();lastRenderedToday=today();$('hourlyToggle').checked=!!state.hourly;$('everySel').value=String(state.every||1);if(!$('taskDate').value)$('taskDate').value=today();applyLang(lang,false);setInterval(()=>{rollover();syncDay();render();reminders()},60000);
+let now=new Date();viewYear=now.getFullYear();viewMonth=now.getMonth();selectedDate=today();lastRenderedToday=today();$('hourlyToggle').checked=!!state.hourly;if(!$('taskDate').value)$('taskDate').value=today();applyLang(lang,false);setInterval(()=>{rollover();syncDay();render();reminders()},60000);
 })();
 if('serviceWorker'in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
+</script>
+<script>
+/* Yommy UI layer: dropdown menu, section navigation, statistics and milestones.
+   Read-only: it never writes app state, storage or Firebase data. */
+(()=>{
+const $=id=>document.getElementById(id);
+const lg=()=>document.documentElement.lang==='en'?'en':'ar';
+const T=(a,e)=>lg()==='en'?e:a;
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const pad=n=>String(n).padStart(2,'0');
+const key=d=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+const pd=s=>{const [y,m,d]=s.split('-').map(Number);return new Date(y,m-1,d,12)};
+const shift=(s,n)=>{const d=pd(s);d.setDate(d.getDate()+n);return key(d)};
+const dayNo=s=>Math.round(pd(s).getTime()/864e5);
+const today=()=>{const d=new Date();if(d.getHours()<2)d.setDate(d.getDate()-1);return key(d)};
+const pct=r=>r&&r.total>0?Math.round((r.done||0)/r.total*100):0;
+const daysTxt=n=>T(n+' يوم',n+(n===1?' day':' days'));
+function readHistory(){try{const x=JSON.parse(localStorage.getItem('yommy_web_v1'));if(x&&x.history&&typeof x.history==='object')return x.history}catch(e){}return {}}
+
+/* ---------- translations for the new UI ---------- */
+function i18n(){
+ document.querySelectorAll('[data-i-ar]').forEach(el=>{el.textContent=lg()==='en'?el.dataset.iEn:el.dataset.iAr});
+ document.querySelectorAll('[data-i-ar-label]').forEach(el=>el.setAttribute('aria-label',lg()==='en'?el.dataset.iEnLabel:el.dataset.iArLabel));
+}
+
+/* ---------- dropdown menu ---------- */
+const menuBtn=$('menuBtn'),menuPanel=$('menuPanel'),menuWrap=$('menuWrap');
+function setMenu(open){menuPanel.hidden=!open;menuBtn.setAttribute('aria-expanded',open?'true':'false')}
+menuBtn.addEventListener('click',()=>setMenu(menuPanel.hidden));
+document.addEventListener('click',e=>{if(!menuPanel.hidden&&!menuWrap.contains(e.target))setMenu(false)});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!menuPanel.hidden){setMenu(false);menuBtn.focus()}});
+menuPanel.addEventListener('click',e=>{const b=e.target.closest('button');if(b&&b.id!=='themeBtn'&&b.id!=='langBtn')setMenu(false)});
+
+/* ---------- statistics ---------- */
+function compute(){
+ const h=readHistory(),t=today();
+ const days=Object.keys(h).filter(k=>/^\d{4}-\d{2}-\d{2}$/.test(k)&&h[k]&&h[k].total>0).sort();
+ const done=days.reduce((a,k)=>a+(h[k].done||0),0);
+ const perfectDays=days.filter(k=>h[k].done>=h[k].total);
+ const active=days.filter(k=>h[k].done>0).length;
+ const past=days.filter(k=>k<t),base=past.length?past:days;
+ const avg=base.length?Math.round(base.reduce((a,k)=>a+pct(h[k]),0)/base.length):0;
+ const P=new Set(perfectDays);let cur=0,c=P.has(t)?t:shift(t,-1);while(P.has(c)){cur++;c=shift(c,-1)}
+ let best=0,run=0,prev=null;perfectDays.forEach(k=>{run=prev!==null&&dayNo(k)-dayNo(prev)===1?run+1:1;if(run>best)best=run;prev=k});
+ return {h,t,days,done,perfect:perfectDays.length,active,avg,cur,best};
+}
+function topTasks(s){
+ const m={};s.days.filter(k=>k<s.t).forEach(k=>(s.h[k].records||[]).forEach(r=>{if(!r)return;const id=r.id||r.name;const o=m[id]||(m[id]={name:r.name,n:0,d:0});o.name=r.name;o.n++;if(r.done)o.d++}));
+ return Object.values(m).filter(o=>o.n>=2).sort((a,b)=>b.d-a.d||b.d/b.n-a.d/a.n).slice(0,5);
+}
+/* ---------- Stages 7-9: chart ranges, weekly statistics, streak (read-only; never writes app state) ---------- */
+const RANGE_KEY='yommy_stats_range_v1',THR_KEY='yommy_streak_threshold_v1';
+let range=7;try{const r=parseInt(localStorage.getItem(RANGE_KEY),10);if(r===7||r===30||r===90)range=r}catch(e){}
+let threshold=100;try{const v=parseInt(localStorage.getItem(THR_KEY),10);if(v>=1&&v<=100)threshold=v}catch(e){}
+let calY=0,calM=0,calInit=false;
+const DEF_CATS=[{id:'study',ico:'📚',ar:'دراسة',en:'Study'},{id:'gym',ico:'🏋️',ar:'جيم',en:'Gym'},{id:'personal',ico:'🧑',ar:'شخصي',en:'Personal'},{id:'work',ico:'💼',ar:'شغل',en:'Work'},{id:'health',ico:'❤️',ar:'صحة',en:'Health'}];
+function readState(){try{const x=JSON.parse(localStorage.getItem('yommy_web_v1'));if(x&&typeof x==='object')return x}catch(e){}return {}}
+const hasData=r=>!!(r&&r.total>0);
+const locale=()=>lg()==='en'?'en-US':'ar-EG';
+const fmtD=(k,o)=>pd(k).toLocaleDateString(locale(),o||{weekday:'short',day:'numeric',month:'short'});
+const shortWd=()=>T(['أحد','اثنين','ثلاثاء','أربعاء','خميس','جمعة','سبت'],['Sun','Mon','Tue','Wed','Thu','Fri','Sat']);
+
+/* Streak: a day succeeds when done/total >= threshold. Days with no record (or 0 tasks) are skipped: they neither extend nor break the streak.
+   Today is ignored until it reaches the threshold (it is still in progress, so it cannot break the streak). */
+function streaks(h,t,thr){
+ const ds=Object.keys(h).filter(k=>/^\d{4}-\d{2}-\d{2}$/.test(k)&&hasData(h[k])&&k<=t).sort();
+ const ok=k=>(h[k].done||0)*100>=thr*h[k].total;
+ let run=0,best=0,runDays=[];const okSet=new Set();
+ ds.forEach(k=>{
+  if(k===t&&!ok(k))return;
+  if(ok(k)){run++;runDays.push(k);okSet.add(k);if(run>best)best=run}else{run=0;runDays=[]}
+ });
+ return {cur:run,best,okSet,curSet:new Set(runDays)};
+}
+/* 7 logical days ending at `end`, using only days that have a record */
+function weekAgg(h,end){
+ const keys=[];for(let i=6;i>=0;i--)keys.push(shift(end,-i));
+ const rows=keys.filter(k=>hasData(h[k]));
+ const done=rows.reduce((a,k)=>a+(h[k].done||0),0),total=rows.reduce((a,k)=>a+h[k].total,0);
+ let best=null;
+ rows.forEach(k=>{const r=h[k],v=(r.done||0)/r.total;if(!best||v>best.v||(v===best.v&&((r.done||0)>best.done||((r.done||0)===best.done&&k>best.k))))best={k,v,done:r.done||0,total:r.total}});
+ return {keys,rows,done,total,inc:total-done,p:total?Math.round(done*100/total):null,best};
+}
+/* Category stats come from the stored day records; each record's category is looked up from the task with the same id in the stored task list */
+function catAgg(rows,h,stt){
+ const map={};(Array.isArray(stt.tasks)?stt.tasks:[]).forEach(t=>{if(t&&t.id)map[t.id]=t.cat||''});
+ const names={};DEF_CATS.forEach(c=>{names[c.id]={ico:c.ico,name:T(c.ar,c.en)}});
+ (Array.isArray(stt.categories)?stt.categories:[]).forEach(c=>{if(c&&typeof c.id==='string'&&typeof c.name==='string'&&c.name.trim())names[c.id]={ico:'🏷️',name:c.name}});
+ const out={};
+ rows.forEach(k=>(h[k].records||[]).forEach(r=>{if(!r)return;let c=map[r.id]||'';if(!names[c])c='';const o=out[c]||(out[c]={id:c,done:0,total:0});o.total++;if(r.done)o.done++}));
+ const list=Object.values(out).map(o=>Object.assign({},o,names[o.id]||{ico:'📂',name:T('بدون تصنيف','Uncategorized')})).sort((x,y)=>y.total-x.total);
+ return {list,hasCats:list.some(o=>o.id!=='')};
+}
+
+function renderChart(s){
+ const n=range,dense=n>7;
+ $('chartTitle').textContent=n===7?T('آخر 7 أيام','Last 7 days'):T(`آخر ${n} يومًا`,`Last ${n} days`);
+ $('chartPanel').classList.toggle('wide',dense);
+ $('rangeTabs').setAttribute('aria-label',T('مدى الرسم البياني','Chart range'));
+ $('rangeTabs').querySelectorAll('button').forEach(b=>{const r=+b.dataset.range,on=r===n;b.textContent=T(`${r} ${r===7?'أيام':'يوم'}`,`${r} days`);b.classList.toggle('active',on);b.setAttribute('aria-pressed',String(on))});
+ const wd=shortWd();let bars='',cnt=0,sum=0;
+ for(let i=n-1;i>=0;i--){
+  const dk=shift(s.t,-i),r=s.h[dk],has=hasData(r),p=has?pct(r):0;
+  if(has){cnt++;sum+=p}
+  const tip=esc(fmtD(dk)+' · '+(has?`${p}% (${r.done||0}/${r.total})`:T('لا توجد بيانات','No data')));
+  const track=`<div class="bar-track${has?'':' nodata'}"><div class="bar-fill" style="height:${p}%"></div></div>`;
+  bars+=dense
+   ?`<div class="bar-col${i===0?' today':''}" title="${tip}" aria-label="${tip}">${track}</div>`
+   :`<div class="bar-col${i===0?' today':''}" title="${tip}"><span class="bar-val">${has?p+'%':'—'}</span>${track}<span class="bar-lbl">${wd[pd(dk).getDay()]}</span></div>`;
+ }
+ const el=$('statsBars');el.className='bars'+(dense?' dense':'');el.style.gridTemplateColumns=`repeat(${n},minmax(0,1fr))`;el.innerHTML=bars;
+ const ax=$('statsAxis');ax.hidden=!dense;
+ if(dense){const f=o=>fmtD(shift(s.t,-o),{day:'numeric',month:'short'});ax.innerHTML=`<span>${f(n-1)}</span><span>${f(Math.round((n-1)/2))}</span><span>${f(0)}</span>`}
+ $('statsChartNote').textContent=cnt
+  ?T(`متوسط الأيام اللي ليها سجل: ${Math.round(sum/cnt)}% · ${cnt} من ${n} يوم عليها بيانات. الأيام المخططة بخطوط مالهاش بيانات ومش محسوبة صفر.`,`Average over days with a record: ${Math.round(sum/cnt)}% · ${cnt} of ${n} days have data. Hatched days have no data and are not counted as 0%.`)
+  :T('مفيش بيانات مسجلة في المدى ده لسه.','No recorded data in this range yet.');
+}
+
+function renderWeekly(s,stt){
+ const w=weekAgg(s.h,s.t),pw=weekAgg(s.h,shift(s.t,-7));
+ const kpi=(ico,val,lbl)=>`<div class="kpi"><span class="kpi-ico" aria-hidden="true">${ico}</span><strong>${val}</strong><span>${lbl}</span></div>`;
+ $('weeklyTitle').textContent=T('📆 الإحصائيات الأسبوعية','📆 Weekly statistics');
+ $('weeklyRange').textContent=`${fmtD(shift(s.t,-6),{day:'numeric',month:'short'})} – ${fmtD(s.t,{day:'numeric',month:'short'})} · `+T(`${w.rows.length} من 7 أيام بها بيانات`,`${w.rows.length} of 7 days have data`);
+ const has=w.rows.length>0;
+ let cmpVal='—',cmpLbl=T('مقارنة بالأسبوع السابق','vs previous week');
+ if(!has)cmpLbl=T('مقارنة بالأسبوع السابق (لا توجد بيانات هذا الأسبوع)','vs previous week (no data this week)');
+ else if(pw.p===null)cmpLbl=T('مقارنة بالأسبوع السابق (لا توجد بيانات للأسبوع السابق)','vs previous week (no data for the previous week)');
+ else{const d=Math.round(w.done*100/w.total-pw.done*100/pw.total);cmpVal=(d>0?'▲ ':d<0?'▼ ':'= ')+Math.abs(d)+T(' نقطة',' pts');cmpLbl=T(`مقارنة بالأسبوع السابق (كان ${pw.p}%)`,`vs previous week (was ${pw.p}%)`)}
+ const bestVal=w.best?`${shortWd()[pd(w.best.k).getDay()]} · ${Math.round(w.best.done*100/w.best.total)}%`:'—';
+ $('weeklyKpis').innerHTML=
+  kpi('✅',has?w.done:'—',T('مهام مكتملة هذا الأسبوع','Tasks completed this week'))+
+  kpi('⏳',has?w.inc:'—',T('مهام غير مكتملة','Incomplete tasks'))+
+  kpi('📊',has?w.p+'%':'—',T('نسبة الإنجاز الأسبوعية','Weekly completion'))+
+  kpi('⭐',bestVal,T('أفضل يوم','Best day'))+
+  kpi('↔️',cmpVal,cmpLbl);
+ $('weeklyCmp').textContent=has&&pw.p!==null?T(`المكتمل: ${w.done} مقابل ${pw.done} في الأسبوع السابق · أيام بها بيانات: ${w.rows.length}/7 مقابل ${pw.rows.length}/7`,`Completed: ${w.done} vs ${pw.done} previous week · days with data: ${w.rows.length}/7 vs ${pw.rows.length}/7`):'';
+ $('weeklyCatTitle').textContent=T('حسب التصنيف','By category');
+ const ca=catAgg(w.rows,s.h,stt);
+ $('weeklyCats').innerHTML=ca.hasCats
+  ?ca.list.map(o=>{const p=Math.round(o.done*100/o.total);return `<div class="rank"><div class="rank-head"><span class="rank-name" dir="auto">${o.ico} ${esc(o.name)}</span><span class="muted">${T(`${o.done} من ${o.total} مهمة`,`${o.done} of ${o.total} tasks`)} · ${p}%</span></div><div class="meter"><div style="width:${p}%"></div></div></div>`}).join('')
+  :`<div class="muted" style="padding:4px 0">${has?T('مفيش تصنيفات متحددة للمهام دي لسه. أضف تصنيف لمهامك عشان تظهر هنا.','No categories are assigned to these tasks yet. Assign categories to see them here.'):T('مفيش بيانات هذا الأسبوع.','No data this week.')}</div>`;
+ $('weeklyNote').textContent=T('الأسبوع = آخر 7 أيام منطقية بما فيها اليوم الحالي (اليوم بيبدأ 2 ص). النسبة = المهام المكتملة ÷ إجمالي مهام الأيام المسجلة فقط. التصنيف بيتحدد من التصنيف الحالي للمهمة، والمهام المحذوفة بتظهر تحت "بدون تصنيف".','Week = the last 7 logical days including today (day starts at 2 AM). Percentage = completed ÷ total tasks of recorded days only. Categories use each task\'s current category; deleted tasks appear under "Uncategorized".');
+}
+
+function renderStreak(s){
+ const st=s.st;
+ $('streakTitle').textContent=T('🔥 السلسلة','🔥 Streak');
+ $('thrLabel').textContent=T('حد النجاح اليومي','Daily success threshold');
+ const inp=$('thrInput');if(document.activeElement!==inp)inp.value=threshold;
+ $('streakSum').textContent=T(`السلسلة الحالية: ${daysTxt(st.cur)} · أطول سلسلة: ${daysTxt(st.best)}`,`Current streak: ${daysTxt(st.cur)} · Longest streak: ${daysTxt(st.best)}`);
+ if(!calInit){const d=pd(s.t);calY=d.getFullYear();calM=d.getMonth();calInit=true}
+ const first=new Date(calY,calM,1,12),off=first.getDay(),dim=new Date(calY,calM+1,0).getDate();
+ $('sTitle').textContent=first.toLocaleDateString(locale(),{month:'long',year:'numeric'});
+ $('sPrev').setAttribute('aria-label',T('الشهر السابق','Previous month'));$('sNext').setAttribute('aria-label',T('الشهر التالي','Next month'));
+ let out=shortWd().map(n=>`<div class="weekday">${n}</div>`).join('');
+ for(let i=0;i<off;i++)out+='<div class="sd blank"></div>';
+ for(let d=1;d<=dim;d++){
+  const dk=`${calY}-${pad(calM+1)}-${pad(d)}`,r=s.h[dk],has=hasData(r);let cls,sub='',tip;
+  if(dk>s.t){cls='future';tip=''}
+  else if(!has){cls='nodata';tip=T('لا توجد بيانات (غير محسوب)','No data (not counted)')}
+  else{const p=pct(r);sub=`<small>${p}%</small>`;tip=`${p}% (${r.done||0}/${r.total})`;
+   if(st.okSet.has(dk))cls='ok'+(st.curSet.has(dk)?' cur':'');else if(dk===s.t){cls='pending';tip+=' · '+T('لسه جاري','in progress')}else cls='miss'}
+  out+=`<div class="sd ${cls}${dk===s.t?' today':''}" title="${esc(fmtD(dk)+(tip?' · '+tip:''))}">${d}${sub}</div>`;
+ }
+ $('streakCal').innerHTML=out;
+ const sw=(bg,extra)=>`<i style="background:${bg};${extra||''}"></i>`;
+ $('streakLegend').innerHTML=
+  `<span>${sw('var(--site-primary)')}${T(`حقق ${threshold}% أو أكتر`,`Reached ${threshold}%+`)}</span>`+
+  `<span>${sw('var(--site-primary)','box-shadow:0 0 0 2px #e8a33d')}${T('ضمن السلسلة الحالية','Current streak')}</span>`+
+  `<span>${sw('var(--surface-2)')}${T('أقل من الحد','Below threshold')}</span>`+
+  `<span>${sw('transparent','border-style:dashed')}${T('مفيش بيانات','No data')}</span>`;
+ $('streakNote').textContent=T(`اليوم الناجح = إنجاز ${threshold}% أو أكتر من مهام اليوم. الأيام اللي مفيهاش سجل مش بتتحسب فاشلة: السلسلة بتعدّي عليها ومش بتتكسر بيها. اليوم الحالي مش بيكسر السلسلة وهو لسه جاري. الحد بيتحفظ على الجهاز ده بس.`,`A successful day = ${threshold}% or more of that day's tasks completed. Days with no record are not treated as failed: the streak passes over them and is not broken by them. The current day cannot break the streak while it is in progress. The threshold is saved on this device only.`);
+}
+
+function renderStats(){
+ const s=compute(),stt=readState();
+ s.st=streaks(s.h,s.t,threshold);
+ const kpi=(ico,val,lbl)=>`<div class="kpi"><span class="kpi-ico" aria-hidden="true">${ico}</span><strong>${val}</strong><span>${lbl}</span></div>`;
+ $('statsKpis').innerHTML=
+  kpi('📈',s.avg+'%',T('متوسط الإنجاز','Average completion'))+
+  kpi('✅',s.done,T('مهام مكتملة','Tasks completed'))+
+  kpi('🔥',daysTxt(s.st.cur),T('السلسلة الحالية','Current streak'))+
+  kpi('🏆',daysTxt(s.st.best),T('أطول سلسلة','Best streak'))+
+  kpi('⭐',s.perfect,T('أيام كاملة','Perfect days'))+
+  kpi('📆',s.days.length,T('أيام مسجلة','Days tracked'));
+ renderChart(s);
+ const top=topTasks(s);
+ $('statsTop').innerHTML=top.length?top.map(o=>{const p=Math.round(o.d/o.n*100);return `<div class="rank"><div class="rank-head"><span class="rank-name">${esc(o.name)}</span><span class="muted">${T(`${o.d} من ${o.n} يوم`,`${o.d} of ${o.n} days`)} · ${p}%</span></div><div class="meter"><div style="width:${p}%"></div></div></div>`}).join(''):`<div class="muted" style="padding:8px 0">${T('محتاجين كام يوم كمان من البيانات عشان نعرض المهام الأكتر التزامًا.','We need a few more days of data to show your most consistent tasks.')}</div>`;
+ renderWeekly(s,stt);
+ renderMonthly(s);
+ renderStreak(s);
+}
+$('rangeTabs').addEventListener('click',e=>{const b=e.target.closest('button[data-range]');if(!b)return;range=+b.dataset.range;try{localStorage.setItem(RANGE_KEY,String(range))}catch(x){}renderStats()});
+$('thrInput').addEventListener('change',e=>{let v=parseInt(e.target.value,10);if(!(v>=1))v=threshold;if(v>100)v=100;threshold=v;e.target.value=v;try{localStorage.setItem(THR_KEY,String(v))}catch(x){}renderStats()});
+$('sPrev').addEventListener('click',()=>{calM--;if(calM<0){calM=11;calY--}renderStats()});
+$('sNext').addEventListener('click',()=>{calM++;if(calM>11){calM=0;calY++}renderStats()});
+window.addEventListener('storage',e=>{if(e.key==='yommy_web_v1')renderActive()});
+
+/* ---------- milestones (derived from existing history; nothing is stored) ---------- */
+const GOALS=[
+ {ico:'✅',ar:'إجمالي المهام المكتملة',en:'Total tasks completed',v:s=>s.done,t:[10,25,50,100,250,500,1000]},
+ {ico:'🔥',ar:'أطول سلسلة أيام كاملة',en:'Longest perfect-day streak',v:s=>s.best,t:[3,7,14,30,60,100]},
+ {ico:'⭐',ar:'الأيام الكاملة',en:'Perfect days',v:s=>s.perfect,t:[1,5,10,25,50,100]},
+ {ico:'📆',ar:'أيام النشاط',en:'Active days',v:s=>s.active,t:[7,30,60,100,200,365]}
+];
+function renderGoals(){
+ const s=compute();let reached=0,total=0;
+ $('goalsGrid').innerHTML=GOALS.map(g=>{
+  const val=g.v(s),next=g.t.find(x=>x>val),n=g.t.filter(x=>x<=val).length;reached+=n;total+=g.t.length;
+  const prog=next?Math.min(100,Math.round(val/next*100)):100;
+  return `<article class="goal"><div class="goal-head"><span class="goal-ico" aria-hidden="true">${g.ico}</span><div><strong>${T(g.ar,g.en)}</strong><div class="muted">${T('الحالي: ','Current: ')}${val}</div></div></div><div class="meter"><div style="width:${prog}%"></div></div><div class="muted">${next?T(`الهدف التالي: ${next} (${val} من ${next})`,`Next goal: ${next} (${val} of ${next})`):T('خلصت كل الأهداف 🏆','All milestones reached 🏆')}</div><div class="badges">${g.t.map(x=>`<span class="badge${x<=val?' on':''}">${x<=val?'✓ ':''}${x}</span>`).join('')}</div></article>`}).join('');
+ $('goalsSummary').textContent=T(`${reached} من ${total} إنجاز`,`${reached} of ${total} reached`);
+}
+
+/* ===== Stages 10-12: Monthly review, user-managed goals, task links =====
+   Goals are stored ONLY in their own key (yommy_goals_v1). This layer never writes yommy_web_v1, the history,
+   or anything that is synced to Firebase. Progress is always derived from the saved history; nothing is invented. */
+const GK='yommy_goals_v1',ISO=/^\d{4}-\d{2}-\d{2}$/;
+const fmtN=n=>{n=Number(n);return Number.isInteger(n)?String(n):String(Math.round(n*100)/100)};
+const dFull=k=>fmtD(k,{day:'numeric',month:'short',year:'numeric'});
+const histKeys=h=>Object.keys(h).filter(k=>ISO.test(k)&&hasData(h[k])).sort();
+const ttype=x=>x==='daily'?T('يومي','Daily'):x==='weekly'?T('أسبوعي','Weekly'):T('مرة واحدة','Once');
+function note(msg,ms=3200){const el=$('toast');el.textContent=msg;el.style.display='block';clearTimeout(note.tm);note.tm=setTimeout(()=>{el.style.display='none'},ms)}
+function catNames(stt){const n={};DEF_CATS.forEach(c=>{n[c.id]={ico:c.ico,name:T(c.ar,c.en)}});(Array.isArray(stt.categories)?stt.categories:[]).forEach(c=>{if(c&&typeof c.id==='string'&&typeof c.name==='string'&&c.name.trim())n[c.id]={ico:'🏷️',name:c.name}});return n}
+
+/* ---------- goal storage ---------- */
+function normGoal(g){
+ return {id:g.id,name:String(g.name),desc:g.desc||'',start:g.start,deadline:g.deadline,cat:g.cat||'',type:g.type,
+  target:Number(g.target)||0,startVal:Number(g.startVal)||0,curVal:Number(g.curVal)||0,step:Number(g.step)||0,unit:g.unit||'',
+  links:Array.isArray(g.links)?[...new Set(g.links.filter(x=>typeof x==='string'))]:[],
+  milestones:Array.isArray(g.milestones)?g.milestones.filter(m=>m&&typeof m.id==='string'&&typeof m.name==='string').map(m=>({id:m.id,name:m.name,at:(m.at===null||m.at===undefined||m.at===''||!Number.isFinite(Number(m.at)))?null:Number(m.at),done:!!m.done})):[],
+  done:!!g.done,doneAt:g.doneAt||'',main:!!g.main,created:g.created||0};
+}
+function loadGoals(){
+ try{const x=JSON.parse(localStorage.getItem(GK));if(x&&Array.isArray(x.goals))return x.goals.filter(g=>g&&typeof g.id==='string'&&typeof g.name==='string'&&ISO.test(g.start||'')&&ISO.test(g.deadline||'')&&['completion','habit','numeric'].includes(g.type)).map(normGoal)}catch(e){}
+ return [];
+}
+let goals=loadGoals();
+function saveGoals(){try{localStorage.setItem(GK,JSON.stringify({v:1,goals}));return true}catch(e){note(T('تعذّر حفظ الأهداف على الجهاز','Could not save goals on this device'));return false}}
+
+/* ---------- progress engine (single source of truth for every screen) ----------
+   A "completion" is one linked task completed on one logical day, from the history records. It is counted once per goal
+   (Set of taskId|date), so a task can never be counted twice for the same goal, but it may count toward several goals.
+   Window = start date .. min(deadline, today). Days without a record are never counted as done or missed. */
+function goalStats(g,h,t,lo,hi){
+ const from=lo&&lo>g.start?lo:g.start;let to=g.deadline<t?g.deadline:t;if(hi&&hi<to)to=hi;
+ const ls=new Set(g.links),seen=new Set();let maintained=0,missed=0,tracked=0;
+ if(ls.size&&from<=to)histKeys(h).forEach(k=>{
+  if(k<from||k>to)return;
+  const recs=(h[k].records||[]).filter(r=>r&&ls.has(r.id));if(!recs.length)return;
+  let all=true;recs.forEach(r=>{if(r.done)seen.add(r.id+'|'+k);else all=false});
+  tracked++;if(all)maintained++;else if(k!==t)missed++;
+ });
+ return {count:seen.size,maintained,missed,tracked};
+}
+function goalView(g,h,t){
+ const st=goalStats(g,h,t);let value,raw;
+ if(g.type==='completion'){value=st.count;raw=g.target>0?value/g.target:0}
+ else if(g.type==='habit'){value=st.maintained;raw=g.target>0?value/g.target:0}
+ else{value=g.curVal+g.step*st.count;const span=g.target-g.startVal;raw=span===0?(value===g.target?1:0):(value-g.startVal)/span}
+ raw=Math.max(0,Math.min(1,raw));const reached=raw>=1-1e-9;
+ const p=reached?100:Math.min(99,Math.round(raw*100));
+ const done=g.done||reached,left=dayNo(g.deadline)-dayNo(t);
+ return {st,value,p,done,left,status:done?'done':(left<0?'over':'active'),notStarted:g.start>t};
+}
+const passed=(g,value,at)=>g.type==='numeric'?(g.target>=g.startVal?value>=at:value<=at):value>=at;
+const stLabel=s=>s==='done'?T('مكتمل','Completed'):s==='over'?T('متأخر','Overdue'):T('نشط','Active');
+function leftTxt(g,v,t){
+ if(v.done)return g.done&&g.doneAt?T('اكتمل في ','Completed on ')+dFull(g.doneAt):T('مكتمل ✓','Completed ✓');
+ if(v.notStarted){const n=dayNo(g.start)-dayNo(t);return T(`يبدأ بعد ${daysTxt(n)} · الموعد النهائي بعد ${daysTxt(v.left)}`,`Starts in ${daysTxt(n)} · due in ${daysTxt(v.left)}`)}
+ if(v.left>0)return T(`باقي ${daysTxt(v.left)}`,`${daysTxt(v.left)} left`);
+ if(v.left===0)return T('آخر يوم النهارده ⏰','Due today ⏰');
+ return T(`متأخر ${daysTxt(-v.left)}`,`Overdue by ${daysTxt(-v.left)}`);
+}
+const sgn=n=>(n<0?'−':'+')+fmtN(Math.abs(n));
+const bd=x=>`<span dir="auto">${esc(x)}</span>`;
+function progTxt(g,v){
+ if(g.type==='completion')return T(`${v.value} من ${g.target} مهمة`,`${v.value} of ${g.target} tasks`);
+ if(g.type==='habit')return T(`${v.value} من ${g.target} يوم محافظ عليهم`,`${v.value} of ${g.target} days maintained`);
+ return `${fmtN(v.value)} / ${fmtN(g.target)}${g.unit?' '+g.unit:''}`;
+}
+
+/* ---------- Home page: main goal, else the active goal with the nearest deadline ---------- */
+let homeSig='';
+function renderHomeGoal(){
+ const el=$('homeGoal');if(!el)return;
+ const h=readHistory(),t=today();
+ const views=goals.map(g=>({g,v:goalView(g,h,t)})).filter(x=>!x.v.done);
+ let pick=null,why='';
+ const pin=views.find(x=>x.g.main);
+ if(pin){pick=pin;why='main'}
+ else{
+  const act=views.filter(x=>x.v.status==='active').sort((a,b)=>a.g.deadline.localeCompare(b.g.deadline));
+  if(act.length){pick=act[0];why='near'}
+  else{const ov=views.filter(x=>x.v.status==='over').sort((a,b)=>b.g.deadline.localeCompare(a.g.deadline));if(ov.length){pick=ov[0];why='near'}}
+ }
+ if(!pick){if(!el.hidden){el.hidden=true;el.innerHTML='';homeSig=''}return}
+ const {g,v}=pick;
+ const html=`<div class="section-title"><h2>🎯 ${why==='main'?T('هدفك الرئيسي','Your main goal'):T('أقرب هدف للموعد النهائي','Nearest deadline')}</h2><button type="button" class="secondary" data-go="goals">${T('كل الأهداف','All goals')}</button></div>`+
+  `<div class="hg-row"><strong dir="auto">${esc(g.name)}</strong><span class="gst ${v.status}">${stLabel(v.status)}</span></div>`+
+  `<div class="meter"><div style="width:${v.p}%"></div></div>`+
+  `<div class="gmeta"><strong>${v.p}%</strong>${bd(progTxt(g,v))}<span class="muted">${bd(leftTxt(g,v,t))}</span></div>`;
+ if(html!==homeSig||el.hidden){homeSig=html;el.innerHTML=html;el.hidden=false}
+}
+$('homeGoal').addEventListener('click',e=>{if(e.target.closest('[data-go="goals"]'))show('goals')});
+
+/* ---------- My goals: list ---------- */
+let gFilter='all',gEditId='',gDirty=false,gfSig='';const openD=new Set();
+const GICO={completion:'✅',habit:'🔁',numeric:'🔢'};
+const gTypeLbl=ty=>ty==='completion'?T('هدف إنجاز','Completion goal'):ty==='habit'?T('هدف عادة','Habit goal'):T('هدف رقمي','Numeric goal');
+
+function cardHtml(g,v,cn,tasks,hn,t){
+ const id=esc(g.id),c=g.cat&&cn[g.cat]?cn[g.cat]:null;
+ const canLink=g.type!=='numeric'||g.step!==0;
+ const atLbl=at=>g.type==='completion'?`${fmtN(at)} ${T('مهمة','tasks')}`:g.type==='habit'?`${fmtN(at)} ${T('يوم','days')}`:`${fmtN(at)}${g.unit?' '+esc(g.unit):''}`;
+ const msR=g.milestones.map(m=>({m,r:m.at!=null?passed(g,v.value,m.at):m.done}));
+ const msDone=msR.filter(x=>x.r).length;
+ const msHtml=msR.map(({m,r})=>`<li class="ms${r?' on':''}">${m.at!=null?`<span class="msi" aria-hidden="true">${r?'✓':'○'}</span>`:`<input type="checkbox" data-ga="ms-toggle" data-gid="${id}" data-mid="${esc(m.id)}" data-fk="m:${id}:${esc(m.id)}" ${r?'checked':''} aria-label="${esc(m.name)}">`}<span class="msn" dir="auto">${esc(m.name)}</span>${m.at!=null?`<span class="badge${r?' on':''}">${atLbl(m.at)}</span>`:''}<button type="button" class="ghost msx" data-ga="ms-del" data-gid="${id}" data-mid="${esc(m.id)}" aria-label="${T('حذف','Delete')}">✕</button></li>`).join('');
+ const atPh=g.type==='completion'?T('عدد المهام (اختياري)','Tasks (optional)'):g.type==='habit'?T('عدد الأيام (اختياري)','Days (optional)'):T('القيمة (اختياري)','Value (optional)');
+ let linkHtml='';
+ if(canLink){
+  const lk=new Set(g.links);
+  const rows=tasks.map(x=>({id:x.id,name:x.name,type:x.type,cat:x.cat,ex:true})).sort((a,b)=>(lk.has(b.id)-lk.has(a.id))||((b.cat===g.cat&&!!g.cat)-(a.cat===g.cat&&!!g.cat))||a.name.localeCompare(b.name));
+  const orphan=g.links.filter(x=>!tasks.some(y=>y.id===x)).map(x=>({id:x,name:hn[x]||T('مهمة محذوفة','Deleted task'),ex:false}));
+  const row=x=>{const cc=x.cat&&cn[x.cat]?`<span class="catchip" dir="auto">${cn[x.cat].ico} ${esc(cn[x.cat].name)}</span>`:'';
+   return `<label class="tl"><input type="checkbox" data-ga="link" data-gid="${id}" data-tid="${esc(x.id)}" data-fk="l:${id}:${esc(x.id)}" ${lk.has(x.id)?'checked':''}><span class="msn" dir="auto">${esc(x.name)}</span><span class="muted">${x.ex?ttype(x.type):T('محذوفة — الأيام السابقة المسجلة لسه محسوبة','deleted — its saved past days still count')}</span>${cc}</label>`};
+  linkHtml=`<details data-dk="${id}:t"${openD.has(g.id+':t')?' open':''}><summary>🔗 ${T('المهام المرتبطة','Linked tasks')} (${g.links.length})</summary>${rows.length||orphan.length?`<div class="tlist">${rows.map(row).join('')}${orphan.map(row).join('')}</div>`:`<div class="muted" style="margin-top:8px">${T('مفيش مهام لسه. ضيف مهام من الصفحة الرئيسية.','No tasks yet. Add tasks from the Home page.')}</div>`}</details>`;
+ }else linkHtml=`<div class="muted">🔗 ${T('اكتب قيمة "لكل مهمة" في تعديل الهدف عشان تقدر تربط مهام بيه.','Set a "per completed task" amount when editing this goal to link tasks to it.')}</div>`;
+ const hint=canLink&&!g.links.length?`<div class="muted">💡 ${T('اربط مهام بالهدف ده عشان يبدأ الحساب.','Link tasks to this goal to start counting progress.')}</div>`:'';
+ const habitLine=g.type==='habit'&&g.links.length?`<div class="muted">${T(`أيام فاتت: ${v.st.missed} · أيام مسجلة: ${v.st.tracked}`,`Missed days: ${v.st.missed} · days tracked: ${v.st.tracked}`)}</div>`:'';
+ const numLine=g.type==='numeric'&&g.step!==0?`<div class="muted">${bd(T(`القيمة الحالية ${fmtN(g.curVal)} ${sgn(g.step*v.st.count)} من ${v.st.count} مهمة مكتملة`,`Current ${fmtN(g.curVal)} ${sgn(g.step*v.st.count)} from ${v.st.count} completed tasks`))}</div>`:'';
+ const valForm=g.type==='numeric'?`<form class="mini valform" data-gid="${id}"><input name="v" type="number" step="any" required value="${esc(fmtN(g.curVal))}" aria-label="${T('القيمة الحالية','Current value')}"><button type="submit" class="secondary">${T('تحديث القيمة','Update value')}</button></form>`:'';
+ return `<article class="goal gcard ${v.status}" data-gid="${id}">`+
+  `<div class="goal-head"><span class="goal-ico" aria-hidden="true">${GICO[g.type]}</span><div><strong dir="auto">${g.main&&!v.done?'⭐ ':''}${esc(g.name)}</strong><div class="muted">${gTypeLbl(g.type)}${c?` · <span dir="auto">${c.ico} ${esc(c.name)}</span>`:''}</div><div class="muted">${esc(dFull(g.start))} → ${esc(dFull(g.deadline))}</div></div><span class="gst ${v.status}">${stLabel(v.status)}</span></div>`+
+  (g.desc?`<div class="gdesc" dir="auto">${esc(g.desc)}</div>`:'')+
+  `<div class="meter" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${v.p}"><div style="width:${v.p}%"></div></div>`+
+  `<div class="gmeta"><strong>${v.p}%</strong>${bd(progTxt(g,v))}</div><div class="muted">⏳ ${bd(leftTxt(g,v,t))}</div>${habitLine}${numLine}${hint}${valForm}`+
+  `<details data-dk="${id}:m"${openD.has(g.id+':m')?' open':''}><summary>🏁 ${T('المراحل','Milestones')} (${msDone}/${g.milestones.length})</summary>${msHtml?`<ul class="mslist">${msHtml}</ul>`:`<div class="muted" style="margin-top:8px">${T('مفيش مراحل لسه.','No milestones yet.')}</div>`}<form class="mini msform" data-gid="${id}"><input name="n" required maxlength="60" placeholder="${T('اسم المرحلة','Milestone name')}" aria-label="${T('اسم المرحلة','Milestone name')}"><input name="a" type="number" step="any" min="0" placeholder="${atPh}" title="${T('لو كتبت رقم المرحلة هتتحقق تلقائيًا لما توصله','If you enter a number, the milestone is reached automatically')}"><button type="submit" class="secondary">${T('إضافة','Add')}</button></form></details>`+
+  linkHtml+
+  `<div class="gact"><button type="button" class="secondary" data-ga="edit" data-gid="${id}">${T('تعديل','Edit')}</button>${g.done?`<button type="button" class="secondary" data-ga="reopen" data-gid="${id}">${T('إعادة فتح','Reopen')}</button>`:(v.done?'':`<button type="button" data-ga="complete" data-gid="${id}">${T('تم الإنجاز ✓','Mark complete ✓')}</button>`)}${v.done?'':`<button type="button" class="secondary" data-ga="main" data-gid="${id}">${g.main?T('☆ إلغاء الرئيسي','☆ Unpin'):T('⭐ هدف رئيسي','⭐ Make main')}</button>`}<button type="button" class="danger" data-ga="del" data-gid="${id}">${T('حذف','Delete')}</button></div></article>`;
+}
+
+function renderGoalFormOptions(cn){
+ const sig=lg()+JSON.stringify(cn);if(sig===gfSig)return;gfSig=sig;
+ const sel=$('gfCat'),cur=sel.value;
+ sel.innerHTML=`<option value="">${T('— بدون تصنيف —','— No category —')}</option>`+Object.keys(cn).map(k=>`<option value="${esc(k)}">${cn[k].ico} ${esc(cn[k].name)}</option>`).join('');
+ sel.value=cn[cur]?cur:'';
+}
+function syncGoalForm(){
+ const ty=$('gfType').value,num=ty==='numeric';
+ $('gfCountGrp').hidden=num;$('gfNumGrp').hidden=!num;
+ $('gfTargetLbl').textContent=ty==='habit'?T('عدد الأيام المطلوب الحفاظ فيها على العادة','Number of days to maintain the habit'):T('عدد المهام المطلوب إنجازها','Number of tasks to complete');
+ $('gfTarget').required=!num;$('gfFrom').required=num;$('gfTo').required=num;
+ $('gfHint').textContent=ty==='completion'?T('بيتحسب كل مهمة مرتبطة اتعملت (مرة واحدة لكل مهمة في اليوم) من تاريخ البداية لحد الموعد النهائي.','Counts each linked task you complete (once per task per day) from the start date until the deadline.')
+  :ty==='habit'?T('اليوم بيتحسب لو كل المهام المرتبطة اللي كانت مجدولة فيه اتعملت. الأيام اللي مفيهاش سجل مش بتتحسب فاشلة.','A day counts when every linked task scheduled that day was completed. Days without a record are not counted as missed.')
+  :T('انت اللي بتحدّث القيمة الحالية. وممكن كل مهمة مرتبطة مكتملة تضيف مقدار ثابت (اختياري).','You update the current value yourself. Optionally, each completed linked task can add a fixed amount.');
+ $('gfSave').textContent=gEditId?T('حفظ التعديلات','Save changes'):T('حفظ الهدف','Save goal');
+ $('gFormTitle').textContent=gEditId?T('✏️ تعديل الهدف','✏️ Edit goal'):T('➕ هدف جديد','➕ New goal');
+}
+function openGoalForm(g){
+ gEditId=g?g.id:'';$('gFormPanel').hidden=false;gfSig='';renderGoalFormOptions(catNames(readState()));
+ $('gForm').reset();$('gfType').disabled=!!g;
+ if(g){
+  $('gfName').value=g.name;$('gfDesc').value=g.desc;$('gfType').value=g.type;$('gfCat').value=g.cat&&$('gfCat').querySelector(`option[value="${g.cat}"]`)?g.cat:'';
+  $('gfStart').value=g.start;$('gfEnd').value=g.deadline;$('gfMain').checked=g.main;
+  if(g.type==='numeric'){$('gfFrom').value=g.startVal;$('gfTo').value=g.target;$('gfNow').value=g.curVal;$('gfStep').value=g.step||'';$('gfUnit').value=g.unit}
+  else $('gfTarget').value=g.target;
+ }else{$('gfStart').value=today();$('gfEnd').value=shift(today(),30)}
+ syncGoalForm();$('gFormPanel').scrollIntoView({behavior:'smooth',block:'nearest'});$('gfName').focus();
+}
+function closeGoalForm(){gEditId='';$('gFormPanel').hidden=true;$('gfType').disabled=false}
+$('gNew').addEventListener('click',()=>{if(!$('gFormPanel').hidden&&!gEditId){closeGoalForm();return}openGoalForm(null)});
+$('gfCancel').addEventListener('click',closeGoalForm);
+$('gfType').addEventListener('change',syncGoalForm);
+$('gForm').addEventListener('submit',e=>{
+ e.preventDefault();
+ const type=$('gfType').value,name=$('gfName').value.trim().slice(0,80),start=$('gfStart').value,end=$('gfEnd').value;
+ if(!name)return;
+ if(!ISO.test(start)||!ISO.test(end)){note(T('اكتب تاريخ البداية والموعد النهائي','Enter a start date and a deadline'));return}
+ if(end<start){note(T('الموعد النهائي لازم يكون في نفس يوم البداية أو بعده','The deadline must be on or after the start date'));return}
+ const span=dayNo(end)-dayNo(start)+1;
+ const base={name,desc:$('gfDesc').value.trim().slice(0,400),cat:$('gfCat').value,start,deadline:end,type};
+ if(type==='numeric'){
+  const a=parseFloat($('gfFrom').value),b=parseFloat($('gfTo').value),c=$('gfNow').value===''?a:parseFloat($('gfNow').value),st=$('gfStep').value===''?0:parseFloat($('gfStep').value);
+  if(![a,b,c,st].every(Number.isFinite)){note(T('اكتب أرقام صحيحة','Enter valid numbers'));return}
+  if(a===b){note(T('القيمة المستهدفة لازم تختلف عن قيمة البداية','The target must differ from the starting value'));return}
+  Object.assign(base,{startVal:a,target:b,curVal:c,step:st,unit:$('gfUnit').value.trim().slice(0,12)});
+ }else{
+  const n=Math.floor(Number($('gfTarget').value));
+  if(!(n>=1)){note(T('اكتب رقم 1 أو أكتر','Enter a number that is 1 or more'));return}
+  if(type==='habit'&&n>span){note(T(`المدة بين البداية والموعد النهائي ${daysTxt(span)} بس، والهدف أكبر منها`,`The period is only ${daysTxt(span)}, but the target is larger`));return}
+  base.target=n;
+ }
+ const id=gEditId||crypto.randomUUID();
+ if(gEditId)goals=goals.map(g=>g.id===id?normGoal({...g,...base}):g);
+ else goals.push(normGoal({...base,id,links:[],milestones:[],created:Date.now()}));
+ if($('gfMain').checked)goals.forEach(g=>{g.main=g.id===id});
+ else goals.forEach(g=>{if(g.id===id)g.main=false});
+ const edited=!!gEditId;saveGoals();closeGoalForm();renderMyGoals(true);renderHomeGoal();
+ note(edited?T('تم تعديل الهدف','Goal updated'):T('اتضاف الهدف','Goal added'));
+});
+
+function renderMyGoals(force){
+ const stt=readState(),h=readHistory(),t=today(),cn=catNames(stt);
+ renderGoalFormOptions(cn);syncGoalForm();
+ $('gfName').placeholder=T('مثلاً: خلّص كورس الخوارزميات','e.g. Finish the algorithms course');
+ $('gfDesc').placeholder=T('تفاصيل إضافية (اختياري)','Extra details (optional)');
+ $('gfFrom').placeholder=T('مثلاً: 80','e.g. 80');$('gfTo').placeholder=T('مثلاً: 75','e.g. 75');$('gfNow').placeholder=T('نفس قيمة البداية','Same as start');$('gfStep').placeholder=T('مثلاً: -0.2 أو 5','e.g. -0.2 or 5');$('gfUnit').placeholder=T('كجم، صفحة…','kg, pages…');
+ const rank={over:0,active:1,done:2};
+ const views=goals.map(g=>({g,v:goalView(g,h,t)})).sort((a,b)=>rank[a.v.status]-rank[b.v.status]||a.g.deadline.localeCompare(b.g.deadline));
+ const cnt={all:views.length,active:0,done:0,over:0};views.forEach(x=>cnt[x.v.status]++);
+ if(!['all','active','done','over'].includes(gFilter))gFilter='all';
+ $('mgTabs').setAttribute('aria-label',T('تصفية الأهداف','Filter goals'));
+ $('mgTabs').innerHTML=[['all',T('الكل','All')],['active',T('نشطة','Active')],['done',T('مكتملة','Completed')],['over',T('متأخرة','Overdue')]].map(([k,l])=>`<button type="button" data-gf="${k}" class="${gFilter===k?'active':''}" aria-pressed="${gFilter===k}">${l} (${cnt[k]})</button>`).join('');
+ $('mgNote').textContent=T('الأهداف دي بتتحفظ على الجهاز ده بس (مش بتتزامن مع حسابك ومش في النسخة الاحتياطية). النسبة بتتحسب من سجل الأيام الفعلي بين تاريخ البداية والموعد النهائي، وكل مهمة بتتحسب مرة واحدة في اليوم لكل هدف.','Goals are saved on this device only (they are not synced to your account or included in the backup file). Progress is calculated from your real day history between the start date and the deadline, and each task counts once per day per goal.');
+ const list=$('mgList'),ae=document.activeElement;
+ if(!force&&(gDirty||(list.contains(ae)&&/^(INPUT|SELECT|TEXTAREA)$/.test(ae.tagName))))return;
+ const fk=ae&&list.contains(ae)&&ae.dataset?ae.dataset.fk:'';
+ const tasks=(Array.isArray(stt.tasks)?stt.tasks:[]).filter(x=>x&&typeof x.id==='string'&&typeof x.name==='string');
+ const hn={};histKeys(h).forEach(k=>(h[k].records||[]).forEach(r=>{if(r&&r.id&&r.name)hn[r.id]=r.name}));
+ const shown=views.filter(x=>gFilter==='all'||x.v.status===gFilter);
+ list.innerHTML=shown.length?shown.map(x=>cardHtml(x.g,x.v,cn,tasks,hn,t)).join(''):`<div class="empty" style="grid-column:1/-1"><div class="emoji">🎯</div><strong>${goals.length?T('مفيش أهداف في التصنيف ده','No goals in this filter'):T('لسه معندكش أهداف','No goals yet')}</strong>${goals.length?'':`<p>${T('اضغط "هدف جديد" وابدأ بهدف صغير.','Press "New goal" and start with a small one.')}</p>`}</div>`;
+ gDirty=false;
+ if(fk){const f=list.querySelector(`[data-fk="${CSS.escape(fk)}"]`);if(f)f.focus()}
+}
+function commitGoals(){saveGoals();renderMyGoals(true);renderHomeGoal()}
+$('mgTabs').addEventListener('click',e=>{const b=e.target.closest('button[data-gf]');if(!b)return;gFilter=b.dataset.gf;renderMyGoals(true)});
+$('mgList').addEventListener('input',e=>{if(e.target.type!=='checkbox')gDirty=true});
+$('mgList').addEventListener('toggle',e=>{const d=e.target;if(d&&d.dataset&&d.dataset.dk){if(d.open)openD.add(d.dataset.dk);else openD.delete(d.dataset.dk)}},true);
+$('mgList').addEventListener('click',e=>{
+ const b=e.target.closest('button[data-ga]');if(!b)return;
+ const g=goals.find(x=>x.id===b.dataset.gid);if(!g)return;const a=b.dataset.ga;
+ if(a==='edit'){openGoalForm(g);return}
+ if(a==='del'){if(!confirm(T('متأكد إنك عايز تحذف الهدف؟ المهام نفسها مش هتتأثر.','Delete this goal? Your tasks will not be affected.')))return;goals=goals.filter(x=>x.id!==g.id);if(gEditId===g.id)closeGoalForm();commitGoals();note(T('تم حذف الهدف','Goal deleted'));return}
+ if(a==='complete'){g.done=true;g.doneAt=today();g.main=false;commitGoals();note(T('مبروك! الهدف اتنجز 🎉','Congratulations! Goal completed 🎉'));return}
+ if(a==='reopen'){g.done=false;g.doneAt='';commitGoals();return}
+ if(a==='main'){const was=g.main;goals.forEach(x=>{x.main=false});g.main=!was;commitGoals();return}
+ if(a==='ms-del'){g.milestones=g.milestones.filter(m=>m.id!==b.dataset.mid);commitGoals()}
+});
+$('mgList').addEventListener('change',e=>{
+ const c=e.target.closest('input[type="checkbox"][data-ga]');if(!c)return;
+ const g=goals.find(x=>x.id===c.dataset.gid);if(!g)return;
+ if(c.dataset.ga==='link'){const s=new Set(g.links);if(c.checked)s.add(c.dataset.tid);else s.delete(c.dataset.tid);g.links=[...s];commitGoals()}
+ else if(c.dataset.ga==='ms-toggle'){const m=g.milestones.find(x=>x.id===c.dataset.mid);if(m){m.done=c.checked;commitGoals()}}
+});
+$('mgList').addEventListener('submit',e=>{
+ e.preventDefault();const f=e.target.closest('form');if(!f)return;
+ const g=goals.find(x=>x.id===f.dataset.gid);if(!g)return;
+ if(f.classList.contains('valform')){
+  const v=parseFloat(f.elements.v.value);if(!Number.isFinite(v)){note(T('اكتب رقم صحيح','Enter a valid number'));return}
+  g.curVal=v;commitGoals();note(T('تم تحديث القيمة','Value updated'));return;
+ }
+ if(f.classList.contains('msform')){
+  const name=f.elements.n.value.trim().slice(0,60),raw=f.elements.a.value;if(!name)return;
+  let at=null;
+  if(raw!==''){
+   at=parseFloat(raw);if(!Number.isFinite(at)){note(T('اكتب رقم صحيح','Enter a valid number'));return}
+   const lo=g.type==='numeric'?Math.min(g.startVal,g.target):0,hi=g.type==='numeric'?Math.max(g.startVal,g.target):g.target;
+   if(at<lo||at>hi||(g.type!=='numeric'&&at<=0)){note(T(`رقم المرحلة لازم يكون بين ${fmtN(lo)} و ${fmtN(hi)}`,`The milestone value must be between ${fmtN(lo)} and ${fmtN(hi)}`));return}
+  }
+  g.milestones.push({id:'m_'+crypto.randomUUID().slice(0,8),name,at,done:false});openD.add(g.id+':m');commitGoals();
+ }
+});
+window.addEventListener('storage',e=>{if(e.key===GK){goals=loadGoals();renderActive()}});
+
+/* ---------- Stage 10: Monthly review (read-only; uses only recorded days) ---------- */
+let mY=0,mM=0,mInit=false;
+function bestDay(rows,h){
+ let best=null;
+ rows.forEach(k=>{const r=h[k],v=(r.done||0)/r.total;if(!best||v>best.v||(v===best.v&&((r.done||0)>best.done||((r.done||0)===best.done&&k>best.k))))best={k,v,done:r.done||0,total:r.total}});
+ return best;
+}
+function monthAgg(h,y,m,t){
+ const dim=new Date(y,m+1,0).getDate(),keys=[];
+ for(let d=1;d<=dim;d++)keys.push(`${y}-${pad(m+1)}-${pad(d)}`);
+ const rows=keys.filter(k=>k<=t&&hasData(h[k]));
+ const done=rows.reduce((a,k)=>a+(h[k].done||0),0),total=rows.reduce((a,k)=>a+h[k].total,0);
+ return {y,m,dim,keys,rows,done,total,inc:total-done,p:total?Math.round(done*100/total):null,best:bestDay(rows,h)};
+}
+function renderMonthly(s){
+ const t=s.t,h=s.h,cd=pd(t),curIdx=cd.getFullYear()*12+cd.getMonth();
+ if(!mInit){mY=cd.getFullYear();mM=cd.getMonth();mInit=true}
+ let idx=mY*12+mM;
+ const fd=s.days.length?pd(s.days[0]):null,minIdx=fd?fd.getFullYear()*12+fd.getMonth():curIdx;
+ if(idx>curIdx){idx=curIdx;mY=cd.getFullYear();mM=cd.getMonth()}
+ const mo=monthAgg(h,mY,mM,t),pi=idx-1,pm=monthAgg(h,Math.floor(pi/12),((pi%12)+12)%12,t);
+ const first=new Date(mY,mM,1,12);
+ $('monthTitleH').textContent=T('🗓️ المراجعة الشهرية','🗓️ Monthly review');
+ $('mTitle').textContent=first.toLocaleDateString(locale(),{month:'long',year:'numeric'});
+ $('mPrev').disabled=idx<=minIdx;$('mNext').disabled=idx>=curIdx;
+ $('mPrev').setAttribute('aria-label',T('الشهر السابق','Previous month'));$('mNext').setAttribute('aria-label',T('الشهر التالي','Next month'));
+ const has=mo.rows.length>0,isCur=idx===curIdx;
+ const kpi=(ico,val,lbl)=>`<div class="kpi"><span class="kpi-ico" aria-hidden="true">${ico}</span><strong>${val}</strong><span>${lbl}</span></div>`;
+ let cmpVal='—',cmpLbl=T('مقارنة بالشهر السابق','vs previous month');
+ if(!has)cmpLbl=T('مقارنة بالشهر السابق (لا توجد بيانات هذا الشهر)','vs previous month (no data this month)');
+ else if(pm.p===null)cmpLbl=T('مقارنة بالشهر السابق (لا توجد بيانات للشهر السابق)','vs previous month (no data for the previous month)');
+ else{const d=Math.round(mo.done*100/mo.total-pm.done*100/pm.total);cmpVal=(d>0?'▲ ':d<0?'▼ ':'= ')+Math.abs(d)+T(' نقطة',' pts');cmpLbl=T(`مقارنة بالشهر السابق (كان ${pm.p}%)`,`vs previous month (was ${pm.p}%)`)}
+ const sub={};mo.rows.forEach(k=>{sub[k]=h[k]});const ms=streaks(sub,t,threshold);
+ $('monthKpis').innerHTML=
+  kpi('📊',has?mo.p+'%':'—',T('نسبة الإنجاز الشهرية','Monthly completion'))+
+  kpi('✅',has?mo.done:'—',T('مهام مكتملة','Tasks completed'))+
+  kpi('⏳',has?mo.inc:'—',T('مهام غير مكتملة','Incomplete tasks'))+
+  kpi('⭐',mo.best?`${shortWd()[pd(mo.best.k).getDay()]} ${pd(mo.best.k).getDate()} · ${Math.round(mo.best.done*100/mo.best.total)}%`:'—',T('أفضل يوم','Best day'))+
+  kpi('↔️',cmpVal,cmpLbl)+
+  kpi('🔥',has?daysTxt(ms.best):'—',T('أطول سلسلة في الشهر','Longest streak this month'));
+ $('monthCmp').textContent=has&&pm.p!==null?T(`المكتمل: ${mo.done} من ${mo.total} مقابل ${pm.done} من ${pm.total} في الشهر السابق · أيام بها بيانات: ${mo.rows.length} مقابل ${pm.rows.length}`,`Completed: ${mo.done} of ${mo.total} vs ${pm.done} of ${pm.total} previous month · days with data: ${mo.rows.length} vs ${pm.rows.length}`):'';
+ $('monthStreak').textContent=has?T(`🔥 تقدّم السلسلة: ${ms.okSet.size} من ${mo.rows.length} يوم مسجل حققوا ${threshold}% أو أكتر · أطول سلسلة في الشهر: ${daysTxt(ms.best)}`+(isCur?` · السلسلة الحالية: ${daysTxt(s.st.cur)}`:''),`🔥 Streak progress: ${ms.okSet.size} of ${mo.rows.length} recorded days reached ${threshold}%+ · longest streak this month: ${daysTxt(ms.best)}`+(isCur?` · current streak: ${daysTxt(s.st.cur)}`:'')):T('🔥 مفيش بيانات للسلسلة في الشهر ده.','🔥 No streak data for this month.');
+ /* chart */
+ $('monthChartTitle').textContent=T('الإنجاز اليومي في الشهر','Daily completion this month');
+ let bars='';
+ mo.keys.forEach(k=>{
+  const r=h[k],fut=k>t,hd=!fut&&hasData(r),p=hd?pct(r):0;
+  const tip=esc(fmtD(k)+' · '+(fut?T('لسه ماجاش','Upcoming'):hd?`${p}% (${r.done||0}/${r.total})`:T('لا توجد بيانات','No data')));
+  bars+=`<div class="bar-col${k===t?' today':''}" title="${tip}" aria-label="${tip}"><div class="bar-track${fut?' future':hd?'':' nodata'}"><div class="bar-fill" style="height:${p}%"></div></div></div>`;
+ });
+ const be=$('monthBars');be.className='bars dense';be.style.gridTemplateColumns=`repeat(${mo.dim},minmax(0,1fr))`;be.innerHTML=bars;
+ $('monthAxis').innerHTML=`<span>${mo.dim?1:''}</span><span>${Math.ceil(mo.dim/2)}</span><span>${mo.dim}</span>`;
+ /* goals progress */
+ $('monthGoalsTitle').textContent=T('🎯 تقدّم الأهداف','🎯 Goals progress');
+ const mf=mo.keys[0],ml=mo.keys[mo.dim-1],gl=goals.filter(g=>g.start<=ml&&g.deadline>=mf);
+ const allV=goals.map(g=>goalView(g,h,t).status),sc={active:0,done:0,over:0};allV.forEach(x=>sc[x]++);
+ const head=goals.length?`<div class="muted" style="margin-bottom:8px">${T(`كل الأهداف الآن: ${sc.active} نشط · ${sc.done} مكتمل · ${sc.over} متأخر`,`All goals now: ${sc.active} active · ${sc.done} completed · ${sc.over} overdue`)}</div>`:'';
+ $('monthGoals').innerHTML=head+(gl.length?gl.map(g=>{
+  const v=goalView(g,h,t);
+  return `<div class="rank"><div class="rank-head"><span class="rank-name" dir="auto">${GICO[g.type]} ${esc(g.name)}</span><span class="muted"><span class="gst ${v.status}">${stLabel(v.status)}</span> ${v.p}%</span></div><div class="meter"><div style="width:${v.p}%"></div></div><div class="muted">${bd(progTxt(g,v))} · ${bd(monthContrib(g,h,t,mf,ml))}</div></div>`}).join(''):`<div class="muted" style="padding:4px 0">${goals.length?T('مفيش أهداف كانت شغالة في الشهر ده.','No goals were running during this month.'):T('لسه معندكش أهداف. أضفها من صفحة الأهداف.','No goals yet. Add some from the Goals page.')}</div>`);
+ $('monthNote').textContent=T('الشهر = كل أيام الشهر التقويمي (اليوم بيبدأ 2 ص). النسبة = المهام المكتملة ÷ إجمالي مهام الأيام المسجلة فقط؛ الأيام اللي مفيهاش سجل (المخططة بخطوط) مش بتتحسب صفر. الشهر الحالي لسه جاري واليوم الحالي محسوب زي ما هو، فالمقارنة بالشهر السابق بتبقى بنسبة الإنجاز مش بالعدد. السلسلة بتستخدم نفس حد النجاح في قسم السلسلة. تقدّم الأهداف الآن بيتحسب لحد النهارده، وسطر "هذا الشهر" بيعرض إنجاز الشهر ده بس.','Month = every day of the calendar month (the day starts at 2 AM). Percentage = completed ÷ total tasks of recorded days only; days with no record (hatched) are not counted as 0%. The current month is still in progress and today is included as-is, so the month comparison uses completion rates, not raw counts. Streak uses the same success threshold as the Streak section. Goal progress is as of today; the "this month" line shows only this month\'s contribution.');
+}
+function monthContrib(g,h,t,lo,hi){
+ const st=goalStats(g,h,t,lo,hi);
+ if(g.type==='completion')return T(`+${st.count} مهمة هذا الشهر`,`+${st.count} tasks this month`);
+ if(g.type==='habit')return T(`${st.maintained} يوم محافظ عليهم هذا الشهر (من ${st.tracked} يوم مسجل)`,`${st.maintained} days maintained this month (of ${st.tracked} tracked)`);
+ const sg=sgn(g.step*st.count);
+ return g.step!==0?T(`${sg} من المهام هذا الشهر`,`${sg} from tasks this month`):T('قيمة يدوية — مفيش سجل شهري','Manual value — no monthly history');
+}
+$('mPrev').addEventListener('click',()=>{mM--;if(mM<0){mM=11;mY--}renderStats()});
+$('mNext').addEventListener('click',()=>{mM++;if(mM>11){mM=0;mY++}renderStats()});
+
+/* ---------- section navigation ---------- */
+const VIEWS=['home','stats','goals','history'];let cur='home';
+function renderActive(){renderHomeGoal();if(cur==='stats')renderStats();else if(cur==='goals'){renderGoals();renderMyGoals()}}
+function show(v){
+ cur=v;VIEWS.forEach(n=>{$('view-'+n).hidden=n!==v});
+ document.querySelectorAll('#mainNav .nav-item').forEach(b=>{const on=b.dataset.view===v;b.classList.toggle('active',on);if(on)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current')});
+ renderActive();window.scrollTo(0,0);
+}
+$('mainNav').addEventListener('click',e=>{const b=e.target.closest('button[data-view]');if(b)show(b.dataset.view)});
+
+/* keep the new sections in sync with the app: re-render when the app re-renders or the language changes */
+new MutationObserver(()=>{i18n();renderActive()}).observe(document.documentElement,{attributes:true,attributeFilter:['lang']});
+const pc=$('percent');if(pc)new MutationObserver(renderActive).observe(pc,{childList:true,characterData:true,subtree:true});
+const pcap=$('progressCaption');if(pcap)new MutationObserver(renderActive).observe(pcap,{childList:true,characterData:true,subtree:true});
+i18n();renderHomeGoal();
+})();
 </script>
 <script type="module">
 import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
