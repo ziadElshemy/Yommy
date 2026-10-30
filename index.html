@@ -180,6 +180,18 @@ html[dir="ltr"] .menu-wrap{order:-1}
 .hg-row{display:flex;align-items:center;justify-content:space-between;gap:10px}
 .hg-row>strong{font-size:17px;overflow-wrap:anywhere}
 </style>
+<style>
+/* ===== Mobile overflow fix =====
+   On phones the layout column was "1fr" (= minmax(auto,1fr)), so it could not shrink below its widest content
+   (the no-wrap category chips), which stretched the whole page sideways. minmax(0,1fr) + min-width:0 lets columns shrink,
+   and the chips row scrolls inside its own box as intended. CSS only; no logic changed. */
+.layout>*,.side-stack>*,.view>*,.history-grid>*,.stats-row>*,.goals-grid>*,#mgList>*,.bars>*{min-width:0}
+.panel,.welcome{min-width:0;max-width:100%}
+.catchips{max-width:100%}
+.stats-row{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+.bars{grid-template-columns:repeat(7,minmax(0,1fr))}
+@media(max-width:800px){.layout,.history-grid,.stats-row,.goals-grid,#mgList{grid-template-columns:minmax(0,1fr)}}
+</style>
 </head>
 <body>
 <div id="app">
