@@ -1,17 +1,14 @@
-name: Yommy reminders
+name: reminders
 
 on:
   schedule:
-    - cron: '7 * * * *'   # every hour at minute 7 (UTC); the script only sends in each user's own 3-hour slots
-  workflow_dispatch:       # lets you run it by hand from the Actions tab
+    - cron: '2 * * * *'   # every hour at minute 2 (UTC); the script itself only sends in each user's own 3-hour slots
+  workflow_dispatch:       # run it by hand from the Actions tab
     inputs:
       force:
         description: 'Send now even if it is not a reminder hour (for testing)'
         type: boolean
         default: false
-
-permissions:
-  contents: read
 
 concurrency:
   group: yommy-reminders
@@ -26,12 +23,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-      - name: Install
-        working-directory: scripts
-        run: npm install --no-audit --no-fund
-      - name: Send reminders
-        working-directory: scripts
+      - run: npm install firebase-admin@12 --no-save --no-audit --no-fund
+      - run: node scripts/send-reminders.js
         env:
           FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
           FORCE: ${{ inputs.force }}
-        run: node send-reminders.js
