@@ -37,6 +37,7 @@ function tasksForDay(st, today) {
   }
   const wd = new Date(today + 'T00:00:00Z').getUTCDay();
   const scheduled = tasks.filter(t => {
+    if (Array.isArray(t.skip) && t.skip.includes(today)) return false;   /* "skip this day" */
     if (t.type === 'daily') return true;
     if (t.type === 'weekly') return Array.isArray(t.weekdays) && t.weekdays.length ? t.weekdays.map(Number).includes(wd) : wd === Number(t.weekday);
     return t.date === today;
