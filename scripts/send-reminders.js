@@ -26,8 +26,9 @@ function logicalDate(lp) {
   return new Date(t).toISOString().slice(0, 10);
 }
 
-/* unfinished tasks for `today`, applying the same daily reset the app does when it was not opened since the day changed */
-function pendingTasks(st, today) {
+/* tasks scheduled for the Yommy day `today` and the ones still unfinished.
+   Applies the same daily reset the app does when it was not opened since the day changed. */
+function tasksForDay(st, today) {
   let tasks = Array.isArray(st.tasks) ? st.tasks.filter(t => t && typeof t.name === 'string' && t.name.trim()) : [];
   if (st.lastDay && st.lastDay < today) {
     tasks = tasks
@@ -35,23 +36,30 @@ function pendingTasks(st, today) {
       .map(t => t.type === 'once' ? { ...t, date: t.date < today ? today : t.date, done: false } : { ...t, done: false });
   }
   const wd = new Date(today + 'T00:00:00Z').getUTCDay();
-  return tasks.filter(t => {
-    if (t.done) return false;
+  const scheduled = tasks.filter(t => {
     if (t.type === 'daily') return true;
     if (t.type === 'weekly') return Array.isArray(t.weekdays) && t.weekdays.length ? t.weekdays.map(Number).includes(wd) : wd === Number(t.weekday);
     return t.date === today;
   });
+  return { scheduled, pending: scheduled.filter(t => !t.done) };
 }
+const pendingTasks = (st, today) => tasksForDay(st, today).pending;
 
+/* wording: identical to the app (index.html: leftTitle / doneTexts / reminderContent) */
+function leftTitle(n, en) {
+  if (en) return `Yommy — ${n} ${n === 1 ? 'task' : 'tasks'} left`;
+  return 'يومي — لسه ' + (n === 1 ? 'مهمة واحدة' : n === 2 ? 'مهمتين' : n <= 10 ? n + ' مهام' : n + ' مهمة');
+}
+function doneMessage(n, lang) {
+  if (lang === 'en') return { title: 'Yommy — All tasks done for today 🎉', body: `You completed ${n} ${n === 1 ? 'task' : 'tasks'} today. Great job!` };
+  return { title: 'يومي — خلصت كل مهام النهارده 🎉', body: n === 1 ? 'خلصت مهمتك النهارده. عاش!' : n === 2 ? 'خلصت مهمتين النهارده. عاش!' : `خلصت ${n} ${n <= 10 ? 'مهام' : 'مهمة'} النهارده. عاش!` };
+}
 function buildMessage(pending, lang) {
   const en = lang === 'en';
-  const list = [...pending]
-    .sort((a, b) => (a.time || '99:99').localeCompare(b.time || '99:99'))
-    .slice(0, 4)
-    .map(x => (x.time ? x.time + ' ' : '') + x.name)
-    .join(en ? ', ' : '، ');
-  const title = en ? `Yommy — ${pending.length} tasks left` : `يومي — لسه ${pending.length} مهام`;
-  return { title, body: list };
+  const sorted = [...pending].sort((a, b) => (a.time || '99:99').localeCompare(b.time || '99:99'));
+  const shown = sorted.slice(0, 4).map(x => (x.time ? x.time + ' ' : '') + x.name).join(en ? ', ' : '، ');
+  const more = sorted.length > 4 ? (en ? `, +${sorted.length - 4} more` : `، و${sorted.length - 4} كمان`) : '';
+  return { title: leftTitle(pending.length, en), body: shown + more };
 }
 
 async function run({ db, messaging, FieldValue, now = new Date(), force = false, log = console.log }) {
@@ -59,21 +67,29 @@ async function run({ db, messaging, FieldValue, now = new Date(), force = false,
   let checked = 0, sent = 0;
   for (const doc of snap.docs) {
     const u = doc.data();
+    const who = 'user ' + doc.id.slice(0, 6) + '…: ';
     const tokens = Array.isArray(u.tokens) ? u.tokens.filter(t => typeof t === 'string' && t) : [];
-    if (!tokens.length || typeof u.json !== 'string') continue;
+    if (!tokens.length) { log(who + 'skipped - no device registered (sign in with Google and enable notifications in the app)'); continue; }
+    if (typeof u.json !== 'string') { log(who + 'skipped - no saved data yet'); continue; }
     let st;
-    try { st = JSON.parse(u.json); } catch (e) { continue; }
-    if (!st || !st.hourly) continue;
+    try { st = JSON.parse(u.json); } catch (e) { log(who + 'skipped - saved data is unreadable'); continue; }
+    if (!st || !st.hourly) { log(who + 'skipped - the reminder switch is off in the app'); continue; }
     const lp = localParts(now, u.tz);
-    if (!force && lp.h % 3) continue;   /* force = manual test run: ignore the 3-hour slot */
+    if (!force && lp.h % 3) { log(who + `skipped - not a reminder hour (local hour ${lp.h}, time zone ${u.tz || 'UTC'})`); continue; }   /* force = manual test run: ignore the 3-hour slot */
     checked++;
     const today = logicalDate(lp);
-    const tag = `${today}-${lp.h}`;
-    if (!force && u.remindSent === tag) continue;
-    if (st.history && st.history[today] && st.history[today].rest) continue;
-    const pending = pendingTasks(st, today);
-    if (!pending.length) continue;
-    const msg = buildMessage(pending, u.lang === 'en' ? 'en' : 'ar');
+    const slot = `${today}-${lp.h}`;          /* one message per user per reminder slot */
+    const tag = 'yommy-' + today;             /* one notification per Yommy day: a newer one replaces the older (same as the app) */
+    if (!force && u.remindSent === slot) { log(who + 'skipped - already notified this hour'); continue; }
+    if (st.history && st.history[today] && st.history[today].rest) { log(who + 'skipped - today is marked as a rest day'); continue; }
+    const { scheduled, pending } = tasksForDay(st, today);
+    const lang = u.lang === 'en' ? 'en' : 'ar';
+    let msg, isDone = false;
+    if (!scheduled.length) { log(who + `skipped - no tasks scheduled today (${Array.isArray(st.tasks) ? st.tasks.length : 0} tasks saved; app last synced day ${st.lastDay || '?'}, server day ${today})`); continue; }
+    if (!pending.length) {
+      if (!force && u.completeSent === today) { log(who + 'skipped - all tasks done, congratulations already sent today'); continue; }
+      msg = doneMessage(scheduled.length, lang); isDone = true;
+    } else msg = buildMessage(pending, lang);
     const res = await messaging.sendEachForMulticast({
       tokens,
       data: { title: msg.title, body: msg.body, tag },
@@ -82,10 +98,10 @@ async function run({ db, messaging, FieldValue, now = new Date(), force = false,
     const dead = [];
     res.responses.forEach((r, i) => { if (!r.success && r.error && DEAD.has(r.error.code)) dead.push(tokens[i]); });
     const upd = {};
-    if (res.successCount > 0) { upd.remindSent = tag; sent++; }
+    if (res.successCount > 0) { upd.remindSent = slot; if (isDone) upd.completeSent = today; sent++; }
     if (dead.length) upd.tokens = FieldValue.arrayRemove(...dead);
     if (Object.keys(upd).length) await doc.ref.update(upd);
-    log(`user ${doc.id.slice(0, 6)}…: ${pending.length} pending, ${res.successCount} sent, ${dead.length} dead tokens removed`);
+    log(`user ${doc.id.slice(0, 6)}…: ${isDone ? 'all ' + scheduled.length + ' done (congrats)' : pending.length + ' of ' + scheduled.length + ' pending'}, ${res.successCount} sent, ${dead.length} dead tokens removed`);
   }
   log(`done: ${snap.size} users, ${checked} in a reminder hour, ${sent} notified`);
   return { sent, checked };
@@ -100,4 +116,4 @@ async function main() {
 }
 
 if (require.main === module) main().catch(e => { console.error('Reminder run failed:', e.message); process.exit(1); });
-module.exports = { run, pendingTasks, buildMessage, localParts, logicalDate };
+module.exports = { run, pendingTasks, tasksForDay, buildMessage, doneMessage, leftTitle, localParts, logicalDate };
