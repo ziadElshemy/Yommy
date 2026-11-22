@@ -2,7 +2,7 @@ name: reminders
 
 on:
   schedule:
-    - cron: '2 * * * *'   # every hour at minute 2 (UTC); the script itself only sends in each user's own 3-hour slots
+    - cron: '17 * * * *'   # every hour at minute 2 (UTC); the script itself only sends in each user's own 3-hour slots
   workflow_dispatch:       # run it by hand from the Actions tab
     inputs:
       force:
