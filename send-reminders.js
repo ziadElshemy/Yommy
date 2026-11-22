@@ -2,7 +2,7 @@
 /*
   Yommy — scheduled reminders (runs on GitHub Actions, free).
   For every signed-in user it reads the data the app already saves in Firestore (users/{uid}: json, tz, lang, tokens)
-  and, when the user's LOCAL hour is a multiple of 3 (0,3,6,...,21) and they still have unfinished tasks today,
+  and, once per 3-hour slot of the user's LOCAL time (0-2, 3-5, ..., 21-23; the first run inside the slot sends) when they still have unfinished tasks today,
   sends one push message to their devices. The app's service worker (sw.js) shows it.
   Same rules as the in-page reminder: every 3 hours around the clock, only if the "reminder" switch is on,
   day starts at 02:00, same notification tag (so you never get two copies), no reminders on a rest day.
@@ -80,12 +80,15 @@ async function run({ db, messaging, FieldValue, now = new Date(), force = false,
     try { st = JSON.parse(u.json); } catch (e) { log(who + 'skipped - saved data is unreadable'); continue; }
     if (!st || !st.hourly) { log(who + 'skipped - the reminder switch is off in the app'); continue; }
     const lp = localParts(now, u.tz);
-    if (!force && lp.h % 3) { log(who + `skipped - not a reminder hour (local hour ${lp.h}, time zone ${u.tz || 'UTC'})`); continue; }   /* force = manual test run: ignore the 3-hour slot */
+    /* GitHub's scheduler is best-effort: hourly runs often start late or are dropped. So instead of requiring the run to land exactly on
+       hour 0,3,6..., each user has one 3-hour SLOT (0-2, 3-5, ...). The first run inside the slot sends the reminder; later runs of the same slot do nothing. */
+    const slotHour = lp.h - (lp.h % 3);
     checked++;
     const today = logicalDate(lp);
-    const slot = `${today}-${lp.h}`;          /* one message per user per reminder slot */
+    const calDate = `${lp.y}-${String(lp.m).padStart(2, '0')}-${String(lp.d).padStart(2, '0')}`;   /* calendar date (not the 02:00 day) so slot 0-2 is one slot */
+    const slot = `${calDate}-${slotHour}`;    /* one message per user per reminder slot */
     const tag = 'yommy-' + today;             /* one notification per Yommy day: a newer one replaces the older (same as the app) */
-    if (!force && u.remindSent === slot) { log(who + 'skipped - already notified this hour'); continue; }
+    if (!force && u.remindSent === slot) { log(who + `skipped - already notified in this 3-hour slot (${slotHour}:00, local hour ${lp.h}, time zone ${u.tz || 'UTC'})`); continue; }
     if (st.history && st.history[today] && st.history[today].rest) { log(who + 'skipped - today is marked as a rest day'); continue; }
     const { scheduled, pending } = tasksForDay(st, today);
     const lang = u.lang === 'en' ? 'en' : 'ar';
@@ -109,7 +112,6 @@ async function run({ db, messaging, FieldValue, now = new Date(), force = false,
     log(`user ${doc.id.slice(0, 6)}…: ${isDone ? 'all ' + scheduled.length + ' done (congrats)' : pending.length + ' of ' + scheduled.length + ' pending'}, ${res.successCount} sent, ${dead.length} dead tokens removed`);
   }
   log(`done: ${snap.size} users, ${checked} in a reminder hour, ${sent} notified`);
-  if (snap.size && !checked && !force) log('note: nobody was in a reminder hour at this UTC time. That is normal when the job runs every hour (2 of 3 runs). If NO run ever notifies anyone, check the workflow cron: it must run every hour ("0 * * * *"); a schedule limited to UTC hours that are multiples of 3 stops matching when a time zone changes its UTC offset (e.g. Egypt daylight saving ended Oct 29).');
   return { sent, checked };
 }
 
